@@ -1,9 +1,8 @@
-import React from 'react'
-import ReactDOM from 'react-dom'
+import React, { Component } from 'react'
 
 import Nested from './nested-component'
 
-class Popup extends React.Component {
+class App extends Component {
   constructor(props) {
     super(props)
     this.state = { tabs: [] }
@@ -43,4 +42,4 @@ class Popup extends React.Component {
   }
 }
 
-ReactDOM.render(<Popup />, document.getElementById('app'))
+export default App
