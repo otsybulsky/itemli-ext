@@ -1,15 +1,15 @@
 {
   "manifest_version": 2,
-  "name": "react-es6-popup-example",
+  "name": "itemli-ext",
   "version": "1.0",
 
   "browser_action": {
     "browser_style": true,
     "default_icon": {
-      "48": "images/Watermelon-48.png",
-      "96": "images/Watermelon-96.png"
+      "48": "images/icons8-add-link-48.png",
+      "96": "images/icons8-add-link-96.png"
     },
-    "default_title": "React Example",
+    "default_title": "Itemli Ext",
     "default_popup": "popup.html"
   },
 
