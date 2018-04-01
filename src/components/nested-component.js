@@ -1,15 +1,15 @@
-import React from 'react';
+import React from 'react'
 
 export default class Nested extends React.Component {
   render() {
     return (
       <div>
-        <h2>Nested Component</h2>
+        <h5>Nested Component</h5>
         <p>
-          This is an example of a nested component that was imported via
-          import / export syntax.
+          This is an example of a nested component that was imported via import
+          / export syntax.
         </p>
       </div>
-    );
+    )
   }
 }

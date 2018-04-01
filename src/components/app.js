@@ -23,7 +23,7 @@ class App extends Component {
   renderTabs() {
     return this.state.tabs.map(tab => {
       return (
-        <li>
+        <li className="collection-item">
           <a target="_blank" href={tab.url}>
             {tab.title}
           </a>
@@ -34,8 +34,9 @@ class App extends Component {
 
   render() {
     return (
-      <div>
-        <h2>Itemli extension</h2>
+      <div className="container">
+        <h5>Itemli extension</h5>
+        <ul className="collection">{this.renderTabs()}</ul>
         <Nested />
       </div>
     )
