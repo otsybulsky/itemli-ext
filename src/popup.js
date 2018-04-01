@@ -34,12 +34,9 @@ class Popup extends React.Component {
   }
 
   render() {
-    console.log('Render Popup')
     return (
       <div>
-        <h1>React Component</h1>
-        <p>This is an example of a popup UI in React!</p>
-        <ul>{this.renderTabs()}</ul>
+        <h2>Itemli extension</h2>
         <Nested />
       </div>
     )
