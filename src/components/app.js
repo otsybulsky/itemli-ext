@@ -7,11 +7,21 @@ import Nested from './nested-component'
 class App extends Component {
   constructor(props) {
     super(props)
-    this.state = { tabs: [] }
+    this.state = { tabs: [], renderTabs: null }
   }
 
-  componentDidMount() {
-    this.setState({ tabs: [], renderTabs: null })
+  componentWillMount() {
+    const _tabs = []
+
+    chrome.tabs.query({ currentWindow: true }, tabs => {
+      tabs.map(tab => {
+        const { index, title, url, favIconUrl } = tab
+        const item = { index, title, url, favIconUrl }
+        _tabs.push(item)
+      })
+    })
+
+    this.setState({ tabs: _tabs })
   }
 
   renderTabs() {
@@ -28,22 +38,13 @@ class App extends Component {
   }
 
   onTest() {
-    this.setState({ tabs: [] })
-
-    chrome.tabs.query({ currentWindow: true }, tabs => {
-      tabs.map(tab => {
-        const { index, title, url, favIconUrl } = tab
-        const item = { index, title, url, favIconUrl }
-        this.setState({ tabs: [...this.state.tabs, item] })
-      })
-      this.setState({ renderTabs: true })
-    })
-
+    this.setState({ renderTabs: true })
     console.log('send test from App onTest')
     this.props.testEvent()
   }
 
   render() {
+    console.log('RENDER App', this.state, this.props)
     return (
       <div>
         <h5>Itemli extension</h5>
@@ -58,4 +59,8 @@ class App extends Component {
   }
 }
 
-export default connect(null, { testEvent })(App)
+function mapStateToProps(store) {
+  return { appState: store.state }
+}
+
+export default connect(mapStateToProps, { testEvent })(App)

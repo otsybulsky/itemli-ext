@@ -17,5 +17,3 @@ ReactDOM.render(
   </Provider>,
   document.querySelector('.container')
 )
-
-window.store = store //for develop ONLY
