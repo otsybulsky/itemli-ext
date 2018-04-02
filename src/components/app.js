@@ -1,4 +1,6 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import { testEvent } from '../actions'
 
 import Nested from './nested-component'
 
@@ -36,6 +38,9 @@ class App extends Component {
       })
       this.setState({ renderTabs: true })
     })
+
+    console.log('send test from App onTest')
+    this.props.testEvent()
   }
 
   render() {
@@ -53,4 +58,4 @@ class App extends Component {
   }
 }
 
-export default App
+export default connect(null, { testEvent })(App)
