@@ -36,10 +36,8 @@ class App extends Component {
     })
   }
 
-  onTest() {
+  onDisplayTabs() {
     this.setState({ renderTabs: true })
-    console.log('send test from App onTest')
-    this.props.testEvent()
   }
 
   render() {
@@ -47,9 +45,9 @@ class App extends Component {
     return (
       <div>
         <h5>Itemli extension</h5>
-        <button className="btn indigo" onClick={this.onTest.bind(this)}>
+        <button className="btn indigo" onClick={this.onDisplayTabs.bind(this)}>
           <i class="material-icons left">input</i>
-          Get tabs list
+          Display tabs list
         </button>
         <ul className="collection">{this.renderTabs()}</ul>
         <Nested />
@@ -62,4 +60,4 @@ function mapStateToProps(store) {
   return { windowTabs: store.state.windowTabs }
 }
 
-export default connect(mapStateToProps, { testEvent, storeCurrentTabs })(App)
+export default connect(mapStateToProps, { storeCurrentTabs })(App)
