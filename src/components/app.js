@@ -27,7 +27,8 @@ class App extends Component {
 
   onTest() {
     this.setState({ tabs: [] })
-    browser.tabs.query({ currentWindow: true }).then(tabs => {
+
+    chrome.tabs.query({ currentWindow: true }, tabs => {
       tabs.map(tab => {
         const { index, title, url, favIconUrl } = tab
         const item = { index, title, url, favIconUrl }
