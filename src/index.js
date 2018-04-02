@@ -15,7 +15,7 @@ ReactDOM.render(
   <Provider store={store}>
     <App />
   </Provider>,
-  document.getElementById('app')
+  document.querySelector('.container')
 )
 
 window.store = store //for develop ONLY

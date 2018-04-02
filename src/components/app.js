@@ -40,7 +40,7 @@ class App extends Component {
 
   render() {
     return (
-      <div className="container">
+      <div>
         <h5>Itemli extension</h5>
         <button className="btn indigo" onClick={this.onTest.bind(this)}>
           <i class="material-icons left">input</i>
