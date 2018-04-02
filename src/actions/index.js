@@ -29,7 +29,7 @@ export function checkServer() {
     dispatch(startCheckServer())
 
     axios
-      .get(`${BACKEND_URL}/api/check`)
+      .get(`${BACKEND_URL}/api/check`, { withCredentials: true })
       .then(response => {
         console.log('AXIOS response', response.data)
       })
