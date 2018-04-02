@@ -1,13 +1,13 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { testEvent } from '../actions'
+import { testEvent, storeCurrentTabs } from '../actions'
 
 import Nested from './nested-component'
 
 class App extends Component {
   constructor(props) {
     super(props)
-    this.state = { tabs: [], renderTabs: null }
+    this.state = { renderTabs: null }
   }
 
   componentWillMount() {
@@ -20,13 +20,12 @@ class App extends Component {
         _tabs.push(item)
       })
     })
-
-    this.setState({ tabs: _tabs })
+    this.props.storeCurrentTabs(_tabs)
   }
 
   renderTabs() {
-    if (!this.state.renderTabs) return <div />
-    return this.state.tabs.map(tab => {
+    if (!this.props.windowTabs) return <div />
+    return this.props.windowTabs.map(tab => {
       return (
         <li className="collection-item">
           <a target="_blank" href={tab.url}>
@@ -44,7 +43,7 @@ class App extends Component {
   }
 
   render() {
-    console.log('RENDER App', this.state, this.props)
+    console.log('RENDER App', 'state', this.state, 'props', this.props)
     return (
       <div>
         <h5>Itemli extension</h5>
@@ -60,7 +59,7 @@ class App extends Component {
 }
 
 function mapStateToProps(store) {
-  return { appState: store.state }
+  return { windowTabs: store.state.windowTabs }
 }
 
-export default connect(mapStateToProps, { testEvent })(App)
+export default connect(mapStateToProps, { testEvent, storeCurrentTabs })(App)
