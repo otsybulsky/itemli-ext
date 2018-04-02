@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { testEvent, storeCurrentTabs } from '../actions'
+import { checkServer, storeCurrentTabs } from '../actions'
 
 import Nested from './nested-component'
 
@@ -21,6 +21,10 @@ class App extends Component {
       })
     })
     this.props.storeCurrentTabs(_tabs)
+  }
+
+  componentDidMount() {
+    this.props.checkServer()
   }
 
   renderTabs() {
@@ -60,4 +64,4 @@ function mapStateToProps(store) {
   return { windowTabs: store.state.windowTabs }
 }
 
-export default connect(mapStateToProps, { storeCurrentTabs })(App)
+export default connect(mapStateToProps, { checkServer, storeCurrentTabs })(App)
