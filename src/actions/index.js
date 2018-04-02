@@ -1,4 +1,7 @@
 import { TEST, STORE_CURRENT_TABS, CHECK_SERVER_START } from '../constants'
+import axios from 'axios'
+
+const BACKEND_URL = 'http://localhost:4000'
 
 export function testEvent() {
   return {
@@ -24,6 +27,14 @@ function startCheckServer() {
 export function checkServer() {
   return dispatch => {
     dispatch(startCheckServer())
-    dispatch(testEvent())
+
+    axios
+      .get(`${BACKEND_URL}/api/check`)
+      .then(response => {
+        console.log('AXIOS response', response.data)
+      })
+      .catch(error => {
+        console.log('AXIOS error', JSON.stringify(error))
+      })
   }
 }
