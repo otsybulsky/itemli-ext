@@ -1,22 +1,19 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { checkServer, storeCurrentTabs } from '../actions'
+import { BACKEND_URL } from '../constants'
 
 import Nested from './nested-component'
 
 class App extends Component {
-  constructor(props) {
-    super(props)
-  }
-
   componentWillMount() {
     chrome.tabs.query({ currentWindow: true }, tabs => {
-      //console.log(tabs)
-      const _tabs = tabs.map(tab => {
-        const { id, index, title, url, favIconUrl } = tab
-        return { id, index, title, url, favIconUrl }
-      })
-      this.props.storeCurrentTabs(_tabs)
+      this.props.storeCurrentTabs(
+        tabs.map(tab => {
+          const { id, index, title, url, favIconUrl } = tab
+          return { id, index, title, url, favIconUrl }
+        })
+      )
     })
   }
 
@@ -26,9 +23,10 @@ class App extends Component {
 
   renderTabs() {
     if (!this.props.windowTabs) return <div />
+
     return this.props.windowTabs.map(tab => {
       return (
-        <li className="collection-item">
+        <li className="collection-item" key={tab.id}>
           <a target="_blank" href={tab.url}>
             {tab.title}
           </a>
@@ -38,8 +36,9 @@ class App extends Component {
   }
 
   onDisplayTabs() {
-    const managerUrl = 'http://localhost:4000/app'
+    const managerUrl = `${BACKEND_URL}/app`
     const firstTab = this.props.windowTabs[0]
+
     if (firstTab.url !== managerUrl) {
       chrome.tabs.create({
         url: managerUrl,
@@ -60,7 +59,6 @@ class App extends Component {
           Display tabs list
         </button>
         <ul className="collection">{this.renderTabs()}</ul>
-        <Nested />
       </div>
     )
   }

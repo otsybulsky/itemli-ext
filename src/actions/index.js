@@ -1,7 +1,11 @@
-import { TEST, STORE_CURRENT_TABS, CHECK_SERVER_START } from '../constants'
-import axios from 'axios'
+import {
+  TEST,
+  STORE_CURRENT_TABS,
+  CHECK_SERVER_START,
+  BACKEND_URL
+} from '../constants'
 
-const BACKEND_URL = 'http://localhost:4000'
+import axios from 'axios'
 
 export function testEvent() {
   return {
