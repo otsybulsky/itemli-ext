@@ -7,20 +7,17 @@ import Nested from './nested-component'
 class App extends Component {
   constructor(props) {
     super(props)
-    this.state = { renderTabs: null }
   }
 
   componentWillMount() {
-    const _tabs = []
-
     chrome.tabs.query({ currentWindow: true }, tabs => {
-      tabs.map(tab => {
-        const { index, title, url, favIconUrl } = tab
-        const item = { index, title, url, favIconUrl }
-        _tabs.push(item)
+      //console.log(tabs)
+      const _tabs = tabs.map(tab => {
+        const { id, index, title, url, favIconUrl } = tab
+        return { id, index, title, url, favIconUrl }
       })
+      this.props.storeCurrentTabs(_tabs)
     })
-    this.props.storeCurrentTabs(_tabs)
   }
 
   componentDidMount() {
@@ -41,11 +38,20 @@ class App extends Component {
   }
 
   onDisplayTabs() {
-    this.setState({ renderTabs: true })
+    const managerUrl = 'http://localhost:4000/app'
+    const firstTab = this.props.windowTabs[0]
+    if (firstTab.url !== managerUrl) {
+      chrome.tabs.create({
+        url: managerUrl,
+        index: 0
+      })
+    } else {
+      chrome.tabs.update(firstTab.id, { active: true })
+    }
+    window.close()
   }
 
   render() {
-    console.log('RENDER App', 'state', this.state, 'props', this.props)
     return (
       <div>
         <h5>Itemli extension</h5>
