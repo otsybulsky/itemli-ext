@@ -21,6 +21,12 @@ class App extends Component {
     this.props.checkServer()
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.serverConnected && nextProps.serverNeedAuth) {
+      this.activatePortal('signin')
+    }
+  }
+
   renderTabs() {
     if (!this.props.windowTabs) return <div />
 
@@ -35,19 +41,29 @@ class App extends Component {
     })
   }
 
-  onDisplayTabs() {
-    const managerUrl = `${BACKEND_URL}/app`
+  activatePortal(path) {
+    const portalUrl = `${BACKEND_URL}`
+    const absolutePath = `${BACKEND_URL}/${path}`
+
     const firstTab = this.props.windowTabs[0]
 
-    if (firstTab.url !== managerUrl) {
+    if (firstTab.url.indexOf(portalUrl) < 0) {
       chrome.tabs.create({
-        url: managerUrl,
+        url: `${absolutePath}`,
         index: 0
       })
     } else {
-      chrome.tabs.update(firstTab.id, { active: true })
+      if (firstTab === absolutePath) {
+        chrome.tabs.update(firstTab.id, { active: true })
+      } else {
+        chrome.tabs.update(firstTab.id, { url: absolutePath, active: true })
+      }
     }
     window.close()
+  }
+
+  onDisplayTabs() {
+    this.activatePortal('app')
   }
 
   render() {
@@ -65,7 +81,11 @@ class App extends Component {
 }
 
 function mapStateToProps(store) {
-  return { windowTabs: store.state.windowTabs }
+  return {
+    windowTabs: store.state.windowTabs,
+    serverConnected: store.state.serverConnected,
+    serverNeedAuth: store.state.serverNeedAuth
+  }
 }
 
 export default connect(mapStateToProps, { checkServer, storeCurrentTabs })(App)
