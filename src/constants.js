@@ -4,6 +4,7 @@ export const CHECK_SERVER_START = 'CHECK_SERVER_START'
 export const CHECK_SERVER_END = 'CHECK_SERVER_END'
 
 export const BACKEND_URL = 'http://localhost:4000'
+export const BACKEND_SOCKET = 'ws://localhost:4000/socket'
 
 export const STATUS_OK = 'STATUS_OK'
 export const STATUS_ERROR = 'STATUS_ERROR'
