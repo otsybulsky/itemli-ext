@@ -17,10 +17,13 @@ export default function(state = INIT_STATE, { type, payload }) {
       const { status, params } = payload.data
       switch (status) {
         case 'ok':
+          window.userToken = params
           return { ...state, serverConnected: true, serverNeedAuth: false }
         case 'need_auth':
+          window.userToken = null
           return { ...state, serverConnected: true, serverNeedAuth: true }
         case 'error':
+          window.userToken = null
           return {
             ...state,
             serverConnected: false,
