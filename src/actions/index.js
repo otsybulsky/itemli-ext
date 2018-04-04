@@ -4,7 +4,9 @@ import {
   CHECK_SERVER_START,
   CHECK_SERVER_END,
   BACKEND_URL,
-  BACKEND_SOCKET
+  BACKEND_SOCKET,
+  SOCKET_CONNECTED,
+  SEND_TABS
 } from '../constants'
 
 import axios from 'axios'
@@ -17,6 +19,17 @@ export function testEvent() {
   return {
     type: TEST,
     payload: 'test'
+  }
+}
+
+export function sendTabs(params) {
+  return dispatch => {
+    dispatch({ type: SEND_TABS, payload: params })
+    if (channel) {
+      channel.push('tabs:add', { content: params[0] }).receive('ok', resp => {
+        console.log(resp)
+      })
+    }
   }
 }
 
@@ -35,29 +48,35 @@ function startCheckServer() {
 }
 
 function createSocket(userToken, channelId) {
-  let socket = new Socket(BACKEND_SOCKET, { params: { token: userToken } })
-  socket.connect()
+  return dispatch => {
+    let socket = new Socket(BACKEND_SOCKET, { params: { token: userToken } })
+    socket.connect()
 
-  channel = socket.channel(`room:${channelId}`, {})
-  channel
-    .join()
-    .receive('ok', resp => {})
-    .receive('error', resp => {
-      console.log('Unable to join channel room', resp)
-    })
+    channel = socket.channel(`room:${channelId}`, {})
+    channel
+      .join()
+      .receive('ok', resp => {
+        dispatch({ type: SOCKET_CONNECTED })
+      })
+      .receive('error', resp => {
+        console.log('Unable to join channel room', resp)
+      })
 
-  //channel.on(`comments:${topicId}:new`, renderComment)
+    //channel.on(`comments:${topicId}:new`, renderComment)
+  }
 }
 
 function endCheckServer(data) {
-  const { status, params: { token, channelId } } = data
-  if (status === 'ok') {
-    createSocket(token, channelId)
-  }
+  return dispatch => {
+    const { status, params: { token, channelId } } = data
+    if (status === 'ok') {
+      dispatch(createSocket(token, channelId))
+    }
 
-  return {
-    type: CHECK_SERVER_END,
-    payload: { data: data }
+    dispatch({
+      type: CHECK_SERVER_END,
+      payload: { data: data }
+    })
   }
 }
 

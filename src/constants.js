@@ -9,3 +9,7 @@ export const BACKEND_SOCKET = 'ws://localhost:4000/socket'
 export const STATUS_OK = 'STATUS_OK'
 export const STATUS_ERROR = 'STATUS_ERROR'
 export const STATUS_NEED_AUTH = 'STATUS_NEED_AUTH'
+
+export const SOCKET_CONNECTED = 'SOCKET_CONNECTED'
+
+export const SEND_TABS = 'SEND_TABS'

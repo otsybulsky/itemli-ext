@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { checkServer, storeCurrentTabs } from '../actions'
+import { checkServer, storeCurrentTabs, sendTabs } from '../actions'
 import { BACKEND_URL } from '../constants'
 
 import Nested from './nested-component'
@@ -66,14 +66,30 @@ class App extends Component {
     this.activatePortal('app')
   }
 
+  sendToServer() {
+    const { serverConnected, socketConnected } = this.props
+    if (serverConnected && socketConnected) {
+      this.props.sendTabs(this.props.windowTabs)
+    }
+  }
+
   render() {
     return (
       <div>
         <h5>Itemli extension</h5>
+
         <button className="btn indigo" onClick={this.onDisplayTabs.bind(this)}>
           <i class="material-icons left">input</i>
           Display tabs list
         </button>
+        <button
+          className="btn indigo right"
+          onClick={this.sendToServer.bind(this)}
+        >
+          <i class="material-icons left">send</i>
+          Send to server
+        </button>
+
         <ul className="collection">{this.renderTabs()}</ul>
       </div>
     )
@@ -84,8 +100,13 @@ function mapStateToProps(store) {
   return {
     windowTabs: store.state.windowTabs,
     serverConnected: store.state.serverConnected,
-    serverNeedAuth: store.state.serverNeedAuth
+    serverNeedAuth: store.state.serverNeedAuth,
+    socketConnected: store.state.socketConnected
   }
 }
 
-export default connect(mapStateToProps, { checkServer, storeCurrentTabs })(App)
+export default connect(mapStateToProps, {
+  checkServer,
+  storeCurrentTabs,
+  sendTabs
+})(App)

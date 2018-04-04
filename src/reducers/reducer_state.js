@@ -1,9 +1,15 @@
-import { TEST, STORE_CURRENT_TABS, CHECK_SERVER_END } from '../constants'
+import {
+  TEST,
+  STORE_CURRENT_TABS,
+  CHECK_SERVER_END,
+  SOCKET_CONNECTED
+} from '../constants'
 
 const INIT_STATE = {
   serverConnected: null,
   serverNeedAuth: null,
   lastError: null,
+  socketConnected: null,
 
   windowTabs: []
 }
@@ -30,6 +36,8 @@ export default function(state = INIT_STATE, { type, payload }) {
         default:
           return state
       }
+    case SOCKET_CONNECTED:
+      return { ...state, socketConnected: true }
 
     default:
       return state
