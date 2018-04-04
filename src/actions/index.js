@@ -3,10 +3,13 @@ import {
   STORE_CURRENT_TABS,
   CHECK_SERVER_START,
   CHECK_SERVER_END,
-  BACKEND_URL
+  BACKEND_URL,
+  BACKEND_SOCKET
 } from '../constants'
 
 import axios from 'axios'
+import { Socket } from 'phoenix'
+let socket = null
 
 export function testEvent() {
   return {
@@ -29,7 +32,18 @@ function startCheckServer() {
   }
 }
 
+function createSocket(userToken) {
+  console.log('TOKEN', userToken)
+  let socket = new Socket(BACKEND_SOCKET, { params: { token: userToken } })
+  socket.connect()
+}
+
 function endCheckServer(data) {
+  const { status, params } = data
+  if (status === 'ok') {
+    createSocket(params)
+  }
+
   return {
     type: CHECK_SERVER_END,
     payload: { data: data }

@@ -3,8 +3,6 @@ import { connect } from 'react-redux'
 import { checkServer, storeCurrentTabs } from '../actions'
 import { BACKEND_URL } from '../constants'
 
-import '../socket'
-
 import Nested from './nested-component'
 
 class App extends Component {
