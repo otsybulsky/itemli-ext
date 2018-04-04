@@ -9,7 +9,9 @@ import {
 
 import axios from 'axios'
 import { Socket } from 'phoenix'
+
 let socket = null
+let channel = null
 
 export function testEvent() {
   return {
@@ -32,16 +34,25 @@ function startCheckServer() {
   }
 }
 
-function createSocket(userToken) {
-  console.log('TOKEN', userToken)
+function createSocket(userToken, channelId) {
   let socket = new Socket(BACKEND_SOCKET, { params: { token: userToken } })
   socket.connect()
+
+  channel = socket.channel(`room:${channelId}`, {})
+  channel
+    .join()
+    .receive('ok', resp => {})
+    .receive('error', resp => {
+      console.log('Unable to join channel room', resp)
+    })
+
+  //channel.on(`comments:${topicId}:new`, renderComment)
 }
 
 function endCheckServer(data) {
-  const { status, params } = data
+  const { status, params: { token, channelId } } = data
   if (status === 'ok') {
-    createSocket(params)
+    createSocket(token, channelId)
   }
 
   return {
