@@ -83,15 +83,12 @@ class App extends Component {
         </div>
       )
     } else {
+      if (this.props.retryConnect) {
+        this.props.checkServer()
+      }
       return (
         <div>
-          <button
-            className="btn indigo"
-            onClick={() => this.props.checkServer()}
-          >
-            <i class="material-icons left">check</i>
-            Check server
-          </button>
+          <h5>Connecting to server ...</h5>
         </div>
       )
     }
@@ -125,7 +122,8 @@ function mapStateToProps(store) {
     windowTabs: store.state.windowTabs,
     serverConnected: store.state.serverConnected,
     serverNeedAuth: store.state.serverNeedAuth,
-    socketConnected: store.state.socketConnected
+    socketConnected: store.state.socketConnected,
+    retryConnect: store.state.retryConnect
   }
 }
 
