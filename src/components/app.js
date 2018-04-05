@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { checkServer, storeCurrentTabs, sendTabs } from '../actions'
+import { checkServer, storeCurrentTabs } from '../actions'
+import { sendTabs } from '../actions/socket'
 import { BACKEND_URL } from '../constants'
 
 import Nested from './nested-component'
