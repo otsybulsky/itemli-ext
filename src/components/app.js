@@ -27,20 +27,6 @@ class App extends Component {
     }
   }
 
-  renderTabs() {
-    if (!this.props.windowTabs) return <div />
-
-    return this.props.windowTabs.map(tab => {
-      return (
-        <li className="collection-item" key={tab.id}>
-          <a target="_blank" href={tab.url}>
-            {tab.title}
-          </a>
-        </li>
-      )
-    })
-  }
-
   activatePortal(path) {
     const portalUrl = `${BACKEND_URL}`
     const absolutePath = `${BACKEND_URL}/${path}`
@@ -73,11 +59,22 @@ class App extends Component {
     }
   }
 
+  renderTabs() {
+    if (!this.props.windowTabs) return <div />
+
+    return this.props.windowTabs.map(tab => {
+      return (
+        <li className="collection-item" key={tab.id}>
+          <a target="_blank" href={tab.url}>
+            {tab.title}
+          </a>
+        </li>
+      )
+    })
+  }
   render() {
     return (
       <div>
-        <h5>Itemli extension</h5>
-
         <button className="btn indigo" onClick={this.onDisplayTabs.bind(this)}>
           <i class="material-icons left">input</i>
           Display tabs list
