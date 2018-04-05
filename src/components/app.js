@@ -94,6 +94,15 @@ class App extends Component {
     }
   }
 
+  renderContent() {
+    const { serverConnected, socketConnected } = this.props
+    if (serverConnected && socketConnected) {
+      return <ul className="collection">{this.renderTabs()}</ul>
+    } else {
+      return <div />
+    }
+  }
+
   renderTabs() {
     if (!this.props.windowTabs) return <div />
 
@@ -111,7 +120,7 @@ class App extends Component {
     return (
       <div>
         {this.renderButtons()}
-        <ul className="collection">{this.renderTabs()}</ul>
+        {this.renderContent()}
       </div>
     )
   }
