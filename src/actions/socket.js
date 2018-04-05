@@ -38,6 +38,13 @@ export function createSocket(userToken, channelId) {
           payload: resp
         })
       })
+
+    channel.onError(err => {
+      dispatch({
+        type: SOCKET_ERROR,
+        payload: err
+      })
+    })
   }
 }
 
