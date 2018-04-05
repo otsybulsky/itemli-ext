@@ -2,7 +2,8 @@ import {
   TEST,
   STORE_CURRENT_TABS,
   CHECK_SERVER_END,
-  SOCKET_CONNECTED
+  SOCKET_CONNECTED,
+  SOCKET_ERROR
 } from '../constants'
 
 const INIT_STATE = {
@@ -20,6 +21,7 @@ export default function(state = INIT_STATE, { type, payload }) {
       return { ...state, windowTabs: payload.windowTabs }
     case CHECK_SERVER_END:
       const { status, params } = payload.data
+      console.log(payload.data)
       switch (status) {
         case 'ok':
           return { ...state, serverConnected: true, serverNeedAuth: false }
@@ -37,7 +39,9 @@ export default function(state = INIT_STATE, { type, payload }) {
           return state
       }
     case SOCKET_CONNECTED:
-      return { ...state, socketConnected: true }
+      return { ...state, socketConnected: true, serverConnected: true }
+    case SOCKET_ERROR:
+      return { ...state, socketConnected: false, lastError: payload }
 
     default:
       return state

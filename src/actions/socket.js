@@ -1,4 +1,9 @@
-import { BACKEND_SOCKET, SOCKET_CONNECTED, SEND_TABS } from '../constants'
+import {
+  BACKEND_SOCKET,
+  SOCKET_CONNECTED,
+  SOCKET_ERROR,
+  SEND_TABS
+} from '../constants'
 import { Socket } from 'phoenix'
 
 let socket = null
@@ -6,8 +11,20 @@ let channel = null
 
 export function createSocket(userToken, channelId) {
   return dispatch => {
-    let socket = new Socket(BACKEND_SOCKET, { params: { token: userToken } })
+    let socket = new Socket(BACKEND_SOCKET, {
+      params: { token: userToken }
+    })
+
+    socket.onError(err => {
+      dispatch({
+        type: SOCKET_ERROR,
+        payload: err
+      })
+    })
+
     socket.connect()
+
+    //-------------------------------------------------------------
 
     channel = socket.channel(`room:${channelId}`, {})
     channel
@@ -16,7 +33,10 @@ export function createSocket(userToken, channelId) {
         dispatch({ type: SOCKET_CONNECTED })
       })
       .receive('error', resp => {
-        console.log('Unable to join channel room', resp)
+        dispatch({
+          type: SOCKET_ERROR,
+          payload: resp
+        })
       })
   }
 }

@@ -60,6 +60,43 @@ class App extends Component {
     }
   }
 
+  renderButtons() {
+    const { serverConnected, socketConnected } = this.props
+    if (serverConnected && socketConnected) {
+      return (
+        <div>
+          <button
+            className="btn indigo"
+            onClick={this.onDisplayTabs.bind(this)}
+          >
+            <i class="material-icons left">input</i>
+            Display tabs list
+          </button>
+
+          <button
+            className="btn indigo right"
+            onClick={this.sendToServer.bind(this)}
+          >
+            <i class="material-icons left">send</i>
+            Send to server
+          </button>
+        </div>
+      )
+    } else {
+      return (
+        <div>
+          <button
+            className="btn indigo"
+            onClick={() => this.props.checkServer()}
+          >
+            <i class="material-icons left">check</i>
+            Check server
+          </button>
+        </div>
+      )
+    }
+  }
+
   renderTabs() {
     if (!this.props.windowTabs) return <div />
 
@@ -76,18 +113,7 @@ class App extends Component {
   render() {
     return (
       <div>
-        <button className="btn indigo" onClick={this.onDisplayTabs.bind(this)}>
-          <i class="material-icons left">input</i>
-          Display tabs list
-        </button>
-        <button
-          className="btn indigo right"
-          onClick={this.sendToServer.bind(this)}
-        >
-          <i class="material-icons left">send</i>
-          Send to server
-        </button>
-
+        {this.renderButtons()}
         <ul className="collection">{this.renderTabs()}</ul>
       </div>
     )

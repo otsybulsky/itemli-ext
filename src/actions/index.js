@@ -33,9 +33,9 @@ function startCheckServer() {
 
 function endCheckServer(data) {
   return dispatch => {
-    const { status, params: { token, channelId } } = data
+    const { status, params } = data
     if (status === 'ok') {
-      dispatch(createSocket(token, channelId))
+      dispatch(createSocket(params.token, params.channelId))
     }
 
     dispatch({
