@@ -83,7 +83,7 @@ class App extends Component {
         </div>
       )
     } else {
-      if (this.props.retryConnect) {
+      if (this.props.retryConnectServer) {
         this.props.checkServer()
       }
       return (
@@ -132,7 +132,7 @@ function mapStateToProps(store) {
     serverConnected: store.state.serverConnected,
     serverNeedAuth: store.state.serverNeedAuth,
     socketConnected: store.state.socketConnected,
-    retryConnect: store.state.retryConnect
+    retryConnectServer: store.state.retryConnectServer
   }
 }
 

@@ -11,15 +11,8 @@ let channel = null
 
 export function createSocket(userToken, channelId) {
   return dispatch => {
-    let socket = new Socket(BACKEND_SOCKET, {
+    socket = new Socket(BACKEND_SOCKET, {
       params: { token: userToken }
-    })
-
-    socket.onError(err => {
-      dispatch({
-        type: SOCKET_ERROR,
-        payload: err
-      })
     })
 
     socket.connect()
@@ -52,9 +45,12 @@ export function sendTabs(params) {
   return dispatch => {
     dispatch({ type: SEND_TABS, payload: params })
     if (channel) {
-      channel.push('tabs:add', { content: params[0] }).receive('ok', resp => {
-        console.log(resp)
-      })
+      channel
+        .push('tabs:add', { content: params[0] })
+        .receive('ok', resp => {
+          console.log(resp)
+        })
+        .receive('error', err => {})
     }
   }
 }

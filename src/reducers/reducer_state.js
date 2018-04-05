@@ -12,7 +12,7 @@ const INIT_STATE = {
   serverNeedAuth: null,
   lastError: null,
   socketConnected: null,
-  retryConnect: null,
+  retryConnectServer: null,
 
   windowTabs: []
 }
@@ -22,24 +22,23 @@ export default function(state = INIT_STATE, { type, payload }) {
     case STORE_CURRENT_TABS:
       return { ...state, windowTabs: payload.windowTabs }
     case CHECK_SERVER_START:
-      return { ...state, retryConnect: null }
+      return { ...state, retryConnectServer: null }
     case CHECK_SERVER_END:
       const { status, params } = payload.data
-      console.log(payload.data)
       switch (status) {
         case 'ok':
           return {
             ...state,
             serverConnected: true,
             serverNeedAuth: false,
-            retryConnect: false
+            retryConnectServer: false
           }
         case 'need_auth':
           return {
             ...state,
             serverConnected: true,
             serverNeedAuth: true,
-            retryConnect: false
+            retryConnectServer: false
           }
         case 'error':
           return {
@@ -47,7 +46,7 @@ export default function(state = INIT_STATE, { type, payload }) {
             serverConnected: false,
             serverNeedAuth: null,
             lastError: params,
-            retryConnect: true
+            retryConnectServer: true
           }
 
         default:
