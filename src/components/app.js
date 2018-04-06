@@ -40,7 +40,8 @@ class App extends Component {
         index: 0
       })
     } else {
-      if (firstTab === absolutePath) {
+      console.log(firstTab.url, absolutePath)
+      if (firstTab.url === absolutePath) {
         chrome.tabs.update(firstTab.id, { active: true })
       } else {
         chrome.tabs.update(firstTab.id, { url: absolutePath, active: true })
@@ -57,6 +58,7 @@ class App extends Component {
     const { serverConnected, socketConnected } = this.props
     if (serverConnected && socketConnected) {
       this.props.sendTabs(this.props.windowTabs)
+      this.activatePortal('app')
     }
   }
 
