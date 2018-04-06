@@ -6,6 +6,8 @@ import {
   BACKEND_URL
 } from '../constants'
 
+import { createSocket } from './socket'
+
 import axios from 'axios'
 
 export function testEvent() {
@@ -30,9 +32,16 @@ function startCheckServer() {
 }
 
 function endCheckServer(data) {
-  return {
-    type: CHECK_SERVER_END,
-    payload: { data: data }
+  return dispatch => {
+    const { status, params } = data
+    if (status === 'ok') {
+      dispatch(createSocket(params.token, params.channelId))
+    }
+
+    dispatch({
+      type: CHECK_SERVER_END,
+      payload: { data: data }
+    })
   }
 }
 
@@ -46,9 +55,7 @@ export function checkServer() {
         dispatch(endCheckServer(response.data))
       })
       .catch(error => {
-        dispatch(
-          endCheckServer({ status: 'error', params: error }) //JSON.stringify(error) })
-        )
+        dispatch(endCheckServer({ status: 'error', params: error }))
       })
   }
 }

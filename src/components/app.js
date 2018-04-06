@@ -1,9 +1,8 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { checkServer, storeCurrentTabs } from '../actions'
+import { sendTabs } from '../actions/socket'
 import { BACKEND_URL } from '../constants'
-
-import '../socket'
 
 import Nested from './nested-component'
 
@@ -27,20 +26,6 @@ class App extends Component {
     if (nextProps.serverConnected && nextProps.serverNeedAuth) {
       this.activatePortal('signin')
     }
-  }
-
-  renderTabs() {
-    if (!this.props.windowTabs) return <div />
-
-    return this.props.windowTabs.map(tab => {
-      return (
-        <li className="collection-item" key={tab.id}>
-          <a target="_blank" href={tab.url}>
-            {tab.title}
-          </a>
-        </li>
-      )
-    })
   }
 
   activatePortal(path) {
@@ -68,15 +53,74 @@ class App extends Component {
     this.activatePortal('app')
   }
 
+  sendToServer() {
+    const { serverConnected, socketConnected } = this.props
+    if (serverConnected && socketConnected) {
+      this.props.sendTabs(this.props.windowTabs)
+    }
+  }
+
+  renderButtons() {
+    const { serverConnected, socketConnected } = this.props
+    if (serverConnected && socketConnected) {
+      return (
+        <div>
+          <button
+            className="btn indigo"
+            onClick={this.onDisplayTabs.bind(this)}
+          >
+            <i class="material-icons left">input</i>
+            Display tabs list
+          </button>
+
+          <button
+            className="btn indigo right"
+            onClick={this.sendToServer.bind(this)}
+          >
+            <i class="material-icons left">send</i>
+            Send to server
+          </button>
+        </div>
+      )
+    } else {
+      if (this.props.retryConnectServer) {
+        this.props.checkServer()
+      }
+      return (
+        <div>
+          <h5>Connecting to server ...</h5>
+        </div>
+      )
+    }
+  }
+
+  renderContent() {
+    const { serverConnected, socketConnected } = this.props
+    if (serverConnected && socketConnected) {
+      return <ul className="collection">{this.renderTabs()}</ul>
+    } else {
+      return <div />
+    }
+  }
+
+  renderTabs() {
+    if (!this.props.windowTabs) return <div />
+
+    return this.props.windowTabs.map(tab => {
+      return (
+        <li className="collection-item" key={tab.id}>
+          <a target="_blank" href={tab.url}>
+            {tab.title}
+          </a>
+        </li>
+      )
+    })
+  }
   render() {
     return (
       <div>
-        <h5>Itemli extension</h5>
-        <button className="btn indigo" onClick={this.onDisplayTabs.bind(this)}>
-          <i class="material-icons left">input</i>
-          Display tabs list
-        </button>
-        <ul className="collection">{this.renderTabs()}</ul>
+        {this.renderButtons()}
+        {this.renderContent()}
       </div>
     )
   }
@@ -86,8 +130,14 @@ function mapStateToProps(store) {
   return {
     windowTabs: store.state.windowTabs,
     serverConnected: store.state.serverConnected,
-    serverNeedAuth: store.state.serverNeedAuth
+    serverNeedAuth: store.state.serverNeedAuth,
+    socketConnected: store.state.socketConnected,
+    retryConnectServer: store.state.retryConnectServer
   }
 }
 
-export default connect(mapStateToProps, { checkServer, storeCurrentTabs })(App)
+export default connect(mapStateToProps, {
+  checkServer,
+  storeCurrentTabs,
+  sendTabs
+})(App)
