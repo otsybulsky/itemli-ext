@@ -46,7 +46,7 @@ export function sendTabs(params) {
     dispatch({ type: SEND_TABS, payload: params })
     if (channel) {
       channel
-        .push('tabs:add', { content: params })
+        .push('tabs:add', params)
         .receive('ok', resp => {
           window.close()
         })

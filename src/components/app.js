@@ -7,6 +7,14 @@ import { BACKEND_URL } from '../constants'
 import Nested from './nested-component'
 
 class App extends Component {
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      tagTitle: new Date()
+    }
+  }
+
   componentWillMount() {
     chrome.tabs.query({ currentWindow: true }, tabs => {
       this.props.storeCurrentTabs(
@@ -57,7 +65,10 @@ class App extends Component {
   sendToServer() {
     const { serverConnected, socketConnected } = this.props
     if (serverConnected && socketConnected) {
-      this.props.sendTabs(this.props.windowTabs)
+      this.props.sendTabs({
+        tag_title: this.state.tagTitle,
+        tabs: this.props.windowTabs
+      })
       this.activatePortal('app')
     }
   }
@@ -122,9 +133,18 @@ class App extends Component {
     return (
       <div>
         {this.renderButtons()}
+        <input
+          className="input-field"
+          placeholder="Enter tag name"
+          value={this.state.tagTitle}
+          onChange={event => this.onInputChange(event.target.value)}
+        />
         {this.renderContent()}
       </div>
     )
+  }
+  onInputChange(tagTitle) {
+    this.setState({ tagTitle })
   }
 }
 
