@@ -2,7 +2,8 @@ import {
   BACKEND_SOCKET,
   SOCKET_CONNECTED,
   SOCKET_ERROR,
-  SEND_TABS
+  SEND_TABS,
+  SEND_TABS_OK
 } from '../constants'
 import { Socket } from 'phoenix'
 
@@ -44,11 +45,12 @@ export function createSocket(userToken, channelId) {
 export function sendTabs(params) {
   return dispatch => {
     dispatch({ type: SEND_TABS, payload: params })
+
     if (channel) {
       channel
         .push('tabs:add', params)
         .receive('ok', resp => {
-          window.close()
+          dispatch({ type: SEND_TABS_OK, payload: params })
         })
         .receive('error', err => {})
     }

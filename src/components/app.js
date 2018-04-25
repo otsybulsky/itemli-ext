@@ -11,7 +11,7 @@ class App extends Component {
     super(props)
 
     this.state = {
-      tagTitle: new Date()
+      tagTitle: 'new tag'
     }
   }
 
@@ -34,19 +34,33 @@ class App extends Component {
     if (nextProps.serverConnected && nextProps.serverNeedAuth) {
       this.activatePortal('signin')
     }
+    if (nextProps.tabsSaved) {
+      this.activatePortal('app', true)
+    }
   }
 
-  activatePortal(path) {
+  activatePortal(path, tabsSaved) {
     const portalUrl = `${BACKEND_URL}`
     const absolutePath = `${BACKEND_URL}/${path}`
 
     const firstTab = this.props.windowTabs[0]
+
+    if (tabsSaved) {
+      this.props.windowTabs.map(item => {
+        if (item.index > 0) {
+          chrome.tabs.remove(item.id)
+        }
+      })
+    }
 
     if (firstTab.url.indexOf(portalUrl) < 0) {
       chrome.tabs.create({
         url: `${absolutePath}`,
         index: 0
       })
+      if (tabsSaved) {
+        chrome.tabs.remove(firstTab.id)
+      }
     } else {
       console.log(firstTab.url, absolutePath)
       if (firstTab.url === absolutePath) {
@@ -55,6 +69,7 @@ class App extends Component {
         chrome.tabs.update(firstTab.id, { url: absolutePath, active: true })
       }
     }
+
     window.close()
   }
 
@@ -69,7 +84,6 @@ class App extends Component {
         tag_title: this.state.tagTitle,
         tabs: this.props.windowTabs
       })
-      this.activatePortal('app')
     }
   }
 
@@ -154,7 +168,8 @@ function mapStateToProps(store) {
     serverConnected: store.state.serverConnected,
     serverNeedAuth: store.state.serverNeedAuth,
     socketConnected: store.state.socketConnected,
-    retryConnectServer: store.state.retryConnectServer
+    retryConnectServer: store.state.retryConnectServer,
+    tabsSaved: store.state.tabsSaved
   }
 }
 
