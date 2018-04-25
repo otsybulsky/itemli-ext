@@ -7,6 +7,14 @@ import { BACKEND_URL } from '../constants'
 import Nested from './nested-component'
 
 class App extends Component {
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      tagTitle: 'new tag'
+    }
+  }
+
   componentWillMount() {
     chrome.tabs.query({ currentWindow: true }, tabs => {
       this.props.storeCurrentTabs(
@@ -26,19 +34,33 @@ class App extends Component {
     if (nextProps.serverConnected && nextProps.serverNeedAuth) {
       this.activatePortal('signin')
     }
+    if (nextProps.tabsSaved) {
+      this.activatePortal('app', true)
+    }
   }
 
-  activatePortal(path) {
+  activatePortal(path, tabsSaved) {
     const portalUrl = `${BACKEND_URL}`
     const absolutePath = `${BACKEND_URL}/${path}`
 
     const firstTab = this.props.windowTabs[0]
+
+    if (tabsSaved) {
+      this.props.windowTabs.map(item => {
+        if (item.index > 0) {
+          chrome.tabs.remove(item.id)
+        }
+      })
+    }
 
     if (firstTab.url.indexOf(portalUrl) < 0) {
       chrome.tabs.create({
         url: `${absolutePath}`,
         index: 0
       })
+      if (tabsSaved) {
+        chrome.tabs.remove(firstTab.id)
+      }
     } else {
       console.log(firstTab.url, absolutePath)
       if (firstTab.url === absolutePath) {
@@ -47,6 +69,7 @@ class App extends Component {
         chrome.tabs.update(firstTab.id, { url: absolutePath, active: true })
       }
     }
+
     window.close()
   }
 
@@ -57,8 +80,10 @@ class App extends Component {
   sendToServer() {
     const { serverConnected, socketConnected } = this.props
     if (serverConnected && socketConnected) {
-      this.props.sendTabs(this.props.windowTabs)
-      this.activatePortal('app')
+      this.props.sendTabs({
+        tag_title: this.state.tagTitle,
+        tabs: this.props.windowTabs
+      })
     }
   }
 
@@ -122,9 +147,18 @@ class App extends Component {
     return (
       <div>
         {this.renderButtons()}
+        <input
+          className="input-field"
+          placeholder="Enter tag name"
+          value={this.state.tagTitle}
+          onChange={event => this.onInputChange(event.target.value)}
+        />
         {this.renderContent()}
       </div>
     )
+  }
+  onInputChange(tagTitle) {
+    this.setState({ tagTitle })
   }
 }
 
@@ -134,7 +168,8 @@ function mapStateToProps(store) {
     serverConnected: store.state.serverConnected,
     serverNeedAuth: store.state.serverNeedAuth,
     socketConnected: store.state.socketConnected,
-    retryConnectServer: store.state.retryConnectServer
+    retryConnectServer: store.state.retryConnectServer,
+    tabsSaved: store.state.tabsSaved
   }
 }
 

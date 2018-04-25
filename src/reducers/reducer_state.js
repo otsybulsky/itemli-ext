@@ -4,7 +4,8 @@ import {
   CHECK_SERVER_START,
   CHECK_SERVER_END,
   SOCKET_CONNECTED,
-  SOCKET_ERROR
+  SOCKET_ERROR,
+  SEND_TABS_OK
 } from '../constants'
 
 const INIT_STATE = {
@@ -13,12 +14,17 @@ const INIT_STATE = {
   lastError: null,
   socketConnected: null,
   retryConnectServer: null,
-
+  tabsSaved: null,
   windowTabs: []
 }
 
 export default function(state = INIT_STATE, { type, payload }) {
   switch (type) {
+    case SEND_TABS_OK:
+      return {
+        ...state,
+        tabsSaved: true
+      }
     case STORE_CURRENT_TABS:
       return { ...state, windowTabs: payload.windowTabs }
     case CHECK_SERVER_START:
