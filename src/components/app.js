@@ -16,12 +16,22 @@ class App extends Component {
   }
 
   componentWillMount() {
+    const tab_pattern = 'http'
     chrome.tabs.query({ currentWindow: true }, tabs => {
       this.props.storeCurrentTabs(
-        tabs.map(tab => {
-          const { id, index, title, url, favIconUrl } = tab
-          return { id, index, title, url, favIconUrl }
-        })
+        tabs
+          .filter(tab => {
+            if (tab.url && tab.url.substr(0, 4) === tab_pattern) {
+              console.log(tab)
+              return true
+            } else {
+              return false
+            }
+          })
+          .map(tab => {
+            const { id, index, title, url, favIconUrl } = tab
+            return { id, index, title, url, favIconUrl }
+          })
       )
     })
   }
@@ -45,22 +55,22 @@ class App extends Component {
 
     const firstTab = this.props.windowTabs[0]
 
-    if (tabsSaved) {
-      this.props.windowTabs.map(item => {
-        if (item.index > 0) {
-          chrome.tabs.remove(item.id)
-        }
-      })
-    }
+    // if (tabsSaved) {
+    //   this.props.windowTabs.map(item => {
+    //     if (item.index > 0) {
+    //       chrome.tabs.remove(item.id)
+    //     }
+    //   })
+    // }
 
     if (firstTab.url.indexOf(portalUrl) < 0) {
       chrome.tabs.create({
         url: `${absolutePath}`,
         index: 0
       })
-      if (tabsSaved) {
-        chrome.tabs.remove(firstTab.id)
-      }
+      // if (tabsSaved) {
+      //   chrome.tabs.remove(firstTab.id)
+      // }
     } else {
       console.log(firstTab.url, absolutePath)
       if (firstTab.url === absolutePath) {
@@ -70,7 +80,7 @@ class App extends Component {
       }
     }
 
-    window.close()
+    //window.close()
   }
 
   onDisplayTabs() {
