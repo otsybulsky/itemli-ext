@@ -1,3 +1,12 @@
 body {
   min-width: 600px;
+  color: #333;
+}
+
+.collection-item {
+  padding: 5px !important;
+}
+.collection-item h6 {
+  display: inline-block;
+  color: #333;
 }

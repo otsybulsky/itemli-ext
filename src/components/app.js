@@ -22,7 +22,6 @@ class App extends Component {
         tabs
           .filter(tab => {
             if (tab.url && tab.url.substr(0, 4) === tab_pattern) {
-              console.log(tab)
               return true
             } else {
               return false
@@ -145,11 +144,18 @@ class App extends Component {
 
     return this.props.windowTabs.map(tab => {
       return (
-        <li className="collection-item" key={tab.id}>
-          <a target="_blank" href={tab.url}>
-            {tab.title}
-          </a>
-        </li>
+        <a
+          className="collection-item"
+          key={tab.id}
+          target="_blank"
+          href={tab.url}
+        >
+          <label>
+            <input type="checkbox" />
+            <span>&nbsp;</span>
+          </label>
+          <h6>{tab.title}</h6>
+        </a>
       )
     })
   }
@@ -163,7 +169,7 @@ class App extends Component {
           value={this.state.tagTitle}
           onChange={event => this.onInputChange(event.target.value)}
         />
-        {this.renderContent()}
+        <div className="collection">{this.renderContent()}</div>
       </div>
     )
   }
