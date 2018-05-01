@@ -1,5 +1,5 @@
 body {
-  min-width: 600px;
+  min-width: 500px;
   color: #333;
 }
 
@@ -9,4 +9,10 @@ body {
 .collection-item h6 {
   display: inline-block;
   color: #333;
+}
+
+.btn {
+  margin-top: 5px;
+  margin-right: 10px;
+  background: #333 !important;
 }

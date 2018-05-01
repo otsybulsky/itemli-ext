@@ -1,8 +1,10 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { checkServer, storeCurrentTabs } from '../actions'
+import { checkServer, storeCurrentTabs, tabChangeSelect } from '../actions'
 import { sendTabs } from '../actions/socket'
 import { BACKEND_URL } from '../constants'
+
+import Article from './article'
 
 import Nested from './nested-component'
 
@@ -29,7 +31,7 @@ class App extends Component {
           })
           .map(tab => {
             const { id, index, title, url, favIconUrl } = tab
-            return { id, index, title, url, favIconUrl }
+            return { id, index, title, url, favIconUrl, selected: true }
           })
       )
     })
@@ -101,20 +103,18 @@ class App extends Component {
     if (serverConnected && socketConnected) {
       return (
         <div>
-          <button
-            className="btn indigo"
-            onClick={this.onDisplayTabs.bind(this)}
-          >
-            <i class="material-icons left">input</i>
-            Display tabs list
+          <button className="btn">
+            <i class="material-icons">select_all</i>
           </button>
 
-          <button
-            className="btn indigo right"
-            onClick={this.sendToServer.bind(this)}
-          >
+          <button className="btn" onClick={this.onDisplayTabs.bind(this)}>
+            <i class="material-icons left">input</i>
+            Show itemli
+          </button>
+
+          <button className="btn" onClick={this.sendToServer.bind(this)}>
             <i class="material-icons left">send</i>
-            Send to server
+            Save selected
           </button>
         </div>
       )
@@ -135,7 +135,7 @@ class App extends Component {
     if (serverConnected && socketConnected) {
       return <ul className="collection">{this.renderTabs()}</ul>
     } else {
-      return <div />
+      return null
     }
   }
 
@@ -151,7 +151,11 @@ class App extends Component {
           href={tab.url}
         >
           <label>
-            <input type="checkbox" />
+            <input
+              key={tab.id}
+              type="checkbox"
+              checked={tab.selected ? 'checked' : ''}
+            />
             <span>&nbsp;</span>
           </label>
           <h6>{tab.title}</h6>
@@ -192,5 +196,6 @@ function mapStateToProps(store) {
 export default connect(mapStateToProps, {
   checkServer,
   storeCurrentTabs,
+  tabChangeSelect,
   sendTabs
 })(App)

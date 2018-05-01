@@ -3,7 +3,8 @@ import {
   STORE_CURRENT_TABS,
   CHECK_SERVER_START,
   CHECK_SERVER_END,
-  BACKEND_URL
+  BACKEND_URL,
+  CHANGE_SELECT
 } from '../constants'
 
 import { createSocket } from './socket'
@@ -14,6 +15,13 @@ export function testEvent() {
   return {
     type: TEST,
     payload: 'test'
+  }
+}
+
+export function tabChangeSelect(params) {
+  return {
+    type: CHANGE_SELECT,
+    payload: params
   }
 }
 
