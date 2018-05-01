@@ -1,6 +1,13 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import { tabChangeSelect } from '../actions'
 
 class Article extends Component {
+  onSelectTab(event) {
+    const { tab, tabChangeSelect } = this.props
+    tabChangeSelect(tab)
+  }
+
   render() {
     const { tab } = this.props
     return (
@@ -14,6 +21,7 @@ class Article extends Component {
           <input
             key={tab.id}
             type="checkbox"
+            onClick={ev => this.onSelectTab(ev)}
             checked={tab.selected ? 'checked' : ''}
           />
           <span>&nbsp;</span>
@@ -24,4 +32,4 @@ class Article extends Component {
   }
 }
 
-export default Article
+export default connect(null, { tabChangeSelect })(Article)

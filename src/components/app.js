@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { checkServer, storeCurrentTabs, tabChangeSelect } from '../actions'
+import { checkServer, storeCurrentTabs } from '../actions'
 import { sendTabs } from '../actions/socket'
 import { BACKEND_URL } from '../constants'
 
@@ -143,24 +143,7 @@ class App extends Component {
     if (!this.props.windowTabs) return <div />
 
     return this.props.windowTabs.map(tab => {
-      return (
-        <a
-          className="collection-item"
-          key={tab.id}
-          target="_blank"
-          href={tab.url}
-        >
-          <label>
-            <input
-              key={tab.id}
-              type="checkbox"
-              checked={tab.selected ? 'checked' : ''}
-            />
-            <span>&nbsp;</span>
-          </label>
-          <h6>{tab.title}</h6>
-        </a>
-      )
+      return <Article tab={tab} />
     })
   }
   render() {
@@ -196,6 +179,5 @@ function mapStateToProps(store) {
 export default connect(mapStateToProps, {
   checkServer,
   storeCurrentTabs,
-  tabChangeSelect,
   sendTabs
 })(App)
