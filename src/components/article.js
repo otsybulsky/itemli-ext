@@ -13,6 +13,7 @@ class Article extends Component {
     const { tab } = this.props
     chrome.tabs.update(tab.id, { active: true })
     event.stopPropagation()
+    window.close()
   }
 
   render() {

@@ -72,7 +72,7 @@ class App extends Component {
       })
     }
 
-    if (firstTab.url.indexOf(portalUrl) < 0) {
+    if (!firstTab || firstTab.url.indexOf(portalUrl) < 0) {
       chrome.tabs.create({
         url: `${absolutePath}`,
         index: 0
@@ -81,7 +81,7 @@ class App extends Component {
         chrome.tabs.remove(firstTab.id)
       }
     } else {
-      console.log(firstTab.url, absolutePath)
+      //console.log(firstTab.url, absolutePath)
       if (firstTab.url === absolutePath) {
         chrome.tabs.update(firstTab.id, { active: true })
       } else {
@@ -115,6 +115,17 @@ class App extends Component {
     }
   }
 
+  onCloseSelected() {
+    const { windowTabs } = this.props
+    const selectedTabs = windowTabs
+      .map(tab => tab.toJS())
+      .filter(tab => tab.selected)
+      .map(item => {
+        chrome.tabs.remove(item.id)
+      })
+    window.close()
+  }
+
   renderButtons() {
     const { serverConnected, socketConnected } = this.props
     if (serverConnected && socketConnected) {
@@ -132,6 +143,12 @@ class App extends Component {
               <a className="btn" onClick={() => this.onSelectAll()}>
                 <i class="material-icons left">select_all</i>
                 {this.props.selectedCount}
+              </a>
+            </li>
+            <li>
+              <a className="btn" onClick={() => this.onCloseSelected()}>
+                <i class="material-icons left">clear_all</i>
+                Close Selected
               </a>
             </li>
             <li>
