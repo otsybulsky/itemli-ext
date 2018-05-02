@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import { checkServer, storeCurrentTabs } from '../actions'
 import { sendTabs } from '../actions/socket'
 import { BACKEND_URL } from '../constants'
+import { mapToArr } from '../helpers'
 
 import Article from './article'
 
@@ -166,8 +167,9 @@ class App extends Component {
 }
 
 function mapStateToProps(store) {
+  //console.log(mapToArr(store.data.tabs))
   return {
-    windowTabs: store.state.windowTabs,
+    windowTabs: mapToArr(store.data.tabs),
     serverConnected: store.state.serverConnected,
     serverNeedAuth: store.state.serverNeedAuth,
     socketConnected: store.state.socketConnected,

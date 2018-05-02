@@ -1,6 +1,5 @@
 import {
   TEST,
-  STORE_CURRENT_TABS,
   CHECK_SERVER_START,
   CHECK_SERVER_END,
   SOCKET_CONNECTED,
@@ -14,15 +13,7 @@ const INIT_STATE = {
   lastError: null,
   socketConnected: null,
   retryConnectServer: null,
-  tabsSaved: null,
-  windowTabs: [],
-  selectedCount: 0
-}
-
-function selectedCount(tabs) {
-  return tabs.reduce((selectedCount, tab) => {
-    return selectedCount + tab.selected
-  }, 0)
+  tabsSaved: null
 }
 
 export default function(state = INIT_STATE, { type, payload }) {
@@ -32,15 +23,6 @@ export default function(state = INIT_STATE, { type, payload }) {
         ...state,
         tabsSaved: true
       }
-
-    case STORE_CURRENT_TABS:
-      const { windowTabs } = payload
-      return {
-        ...state,
-        windowTabs: windowTabs,
-        selectedCount: selectedCount(windowTabs)
-      }
-
     case CHECK_SERVER_START:
       return { ...state, retryConnectServer: null }
     case CHECK_SERVER_END:
