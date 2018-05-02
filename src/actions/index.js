@@ -4,7 +4,8 @@ import {
   CHECK_SERVER_START,
   CHECK_SERVER_END,
   BACKEND_URL,
-  CHANGE_SELECT
+  CHANGE_SELECT,
+  CHANGE_SELECT_ALL
 } from '../constants'
 
 import { createSocket } from './socket'
@@ -15,6 +16,13 @@ export function testEvent() {
   return {
     type: TEST,
     payload: 'test'
+  }
+}
+
+export function tabChangeSelectAll(params) {
+  return {
+    type: CHANGE_SELECT_ALL,
+    payload: params
   }
 }
 

@@ -6,6 +6,7 @@ import { BACKEND_URL } from '../constants'
 import { mapToArr } from '../helpers'
 
 import Article from './article'
+import { tabChangeSelectAll } from '../actions'
 
 import Nested from './nested-component'
 
@@ -99,12 +100,20 @@ class App extends Component {
     }
   }
 
+  onSelectAll() {
+    const { windowTabs, tabChangeSelectAll } = this.props
+    if (windowTabs.length > 0) {
+      const flag = !windowTabs[0].selected
+      tabChangeSelectAll({ checked: flag })
+    }
+  }
+
   renderButtons() {
     const { serverConnected, socketConnected } = this.props
     if (serverConnected && socketConnected) {
       return (
         <div>
-          <button className="btn">
+          <button className="btn" onClick={() => this.onSelectAll()}>
             <i class="material-icons">select_all</i>
           </button>
 
@@ -180,5 +189,6 @@ function mapStateToProps(store) {
 export default connect(mapStateToProps, {
   checkServer,
   storeCurrentTabs,
-  sendTabs
+  sendTabs,
+  tabChangeSelectAll
 })(App)

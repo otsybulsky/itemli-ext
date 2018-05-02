@@ -1,7 +1,11 @@
 import { OrderedMap, Record } from 'immutable'
 import { arrToMap, mapToArr } from '../helpers'
 
-import { STORE_CURRENT_TABS, CHANGE_SELECT } from '../constants'
+import {
+  STORE_CURRENT_TABS,
+  CHANGE_SELECT,
+  CHANGE_SELECT_ALL
+} from '../constants'
 
 const TabRecord = Record({
   id: undefined,
@@ -40,6 +44,13 @@ export default (state = defaultState, action) => {
     case CHANGE_SELECT:
       const { tab } = payload
       new_state = state.setIn(['tabs', tab.id, 'selected'], !tab.selected)
+      return new_state.set('selectedCount', selectedCount(new_state.tabs))
+
+    case CHANGE_SELECT_ALL:
+      const { checked } = payload
+      new_state = state.update('tabs', tabs =>
+        tabs.map(tab => tab.set('selected', checked))
+      )
       return new_state.set('selectedCount', selectedCount(new_state.tabs))
 
     default:
