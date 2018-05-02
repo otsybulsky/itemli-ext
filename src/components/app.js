@@ -56,24 +56,30 @@ class App extends Component {
     const portalUrl = `${BACKEND_URL}`
     const absolutePath = `${BACKEND_URL}/${path}`
 
-    const firstTab = this.props.windowTabs[0]
+    const { windowTabs } = this.props
 
-    // if (tabsSaved) {
-    //   this.props.windowTabs.map(item => {
-    //     if (item.index > 0) {
-    //       chrome.tabs.remove(item.id)
-    //     }
-    //   })
-    // }
+    const firstTab = windowTabs[0]
+
+    const selectedTabs = windowTabs
+      .map(tab => tab.toJS())
+      .filter(tab => tab.selected)
+
+    if (tabsSaved) {
+      selectedTabs.map(item => {
+        if (item.index > 0) {
+          chrome.tabs.remove(item.id)
+        }
+      })
+    }
 
     if (firstTab.url.indexOf(portalUrl) < 0) {
       chrome.tabs.create({
         url: `${absolutePath}`,
         index: 0
       })
-      // if (tabsSaved) {
-      //   chrome.tabs.remove(firstTab.id)
-      // }
+      if (tabsSaved) {
+        chrome.tabs.remove(firstTab.id)
+      }
     } else {
       console.log(firstTab.url, absolutePath)
       if (firstTab.url === absolutePath) {
@@ -83,7 +89,7 @@ class App extends Component {
       }
     }
 
-    //window.close()
+    window.close()
   }
 
   onDisplayTabs() {
@@ -91,11 +97,12 @@ class App extends Component {
   }
 
   sendToServer() {
-    const { serverConnected, socketConnected } = this.props
+    const { serverConnected, socketConnected, windowTabs } = this.props
+
     if (serverConnected && socketConnected) {
       this.props.sendTabs({
         tag_title: this.state.tagTitle,
-        tabs: this.props.windowTabs
+        tabs: windowTabs.map(tab => tab.toJS()).filter(tab => tab.selected)
       })
     }
   }
@@ -112,38 +119,34 @@ class App extends Component {
     const { serverConnected, socketConnected } = this.props
     if (serverConnected && socketConnected) {
       return (
-        <div className="navbar-fixed">
-          <nav>
-            <div class="nav-wrapper">
-              <input
-                className="input-field"
-                placeholder="Enter tag name"
-                value={this.state.tagTitle}
-                onChange={event => this.onInputChange(event.target.value)}
-              />
+        <div className="interface">
+          <input
+            className="input-field"
+            placeholder="Enter tag name"
+            value={this.state.tagTitle}
+            onChange={event => this.onInputChange(event.target.value)}
+          />
 
-              <ul>
-                <li>
-                  <a className="btn" onClick={() => this.onSelectAll()}>
-                    <i class="material-icons left">select_all</i>
-                    {this.props.selectedCount}
-                  </a>
-                </li>
-                <li>
-                  <a className="btn" onClick={this.onDisplayTabs.bind(this)}>
-                    <i class="material-icons left">input</i>
-                    Show itemli
-                  </a>
-                </li>
-                <li>
-                  <a className="btn" onClick={this.sendToServer.bind(this)}>
-                    <i class="material-icons left">send</i>
-                    Save selected
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </nav>
+          <ul>
+            <li>
+              <a className="btn" onClick={() => this.onSelectAll()}>
+                <i class="material-icons left">select_all</i>
+                {this.props.selectedCount}
+              </a>
+            </li>
+            <li>
+              <a className="btn" onClick={this.onDisplayTabs.bind(this)}>
+                <i class="material-icons left">input</i>
+                Show itemli
+              </a>
+            </li>
+            <li>
+              <a className="btn" onClick={this.sendToServer.bind(this)}>
+                <i class="material-icons left">send</i>
+                Save selected
+              </a>
+            </li>
+          </ul>
         </div>
       )
     } else {
@@ -162,7 +165,7 @@ class App extends Component {
     const { serverConnected, socketConnected } = this.props
     if (serverConnected && socketConnected) {
       return (
-        <div>
+        <div className="content">
           <ul className="collection">{this.renderTabs()}</ul>
         </div>
       )
