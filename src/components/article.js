@@ -5,7 +5,7 @@ import { tabChangeSelect } from '../actions'
 class Article extends Component {
   onSelectTab(event) {
     const { tab, tabChangeSelect } = this.props
-    tabChangeSelect(tab)
+    tabChangeSelect({ tab })
   }
 
   render() {

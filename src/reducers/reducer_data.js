@@ -40,7 +40,7 @@ export default (state = defaultState, action) => {
 
     case CHANGE_SELECT:
       const { tab } = payload
-      return state
+      return state.setIn(['tabs', tab.id, 'selected'], !tab.selected)
 
     default:
       return state

@@ -144,7 +144,7 @@ class App extends Component {
     if (!this.props.windowTabs) return <div />
 
     return this.props.windowTabs.map(tab => {
-      return <Article tab={tab} />
+      return <Article tab={tab.toJS()} />
     })
   }
   render() {
@@ -167,7 +167,6 @@ class App extends Component {
 }
 
 function mapStateToProps(store) {
-  //console.log(mapToArr(store.data.tabs))
   return {
     windowTabs: mapToArr(store.data.tabs),
     serverConnected: store.state.serverConnected,
