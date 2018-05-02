@@ -112,20 +112,38 @@ class App extends Component {
     const { serverConnected, socketConnected } = this.props
     if (serverConnected && socketConnected) {
       return (
-        <div>
-          <button className="btn" onClick={() => this.onSelectAll()}>
-            <i class="material-icons">select_all</i>
-          </button>
+        <div className="navbar-fixed">
+          <nav>
+            <div class="nav-wrapper">
+              <input
+                className="input-field"
+                placeholder="Enter tag name"
+                value={this.state.tagTitle}
+                onChange={event => this.onInputChange(event.target.value)}
+              />
 
-          <button className="btn" onClick={this.onDisplayTabs.bind(this)}>
-            <i class="material-icons left">input</i>
-            Show itemli
-          </button>
-
-          <button className="btn" onClick={this.sendToServer.bind(this)}>
-            <i class="material-icons left">send</i>
-            Save selected
-          </button>
+              <ul>
+                <li>
+                  <a className="btn" onClick={() => this.onSelectAll()}>
+                    <i class="material-icons left">select_all</i>
+                    {this.props.selectedCount}
+                  </a>
+                </li>
+                <li>
+                  <a className="btn" onClick={this.onDisplayTabs.bind(this)}>
+                    <i class="material-icons left">input</i>
+                    Show itemli
+                  </a>
+                </li>
+                <li>
+                  <a className="btn" onClick={this.sendToServer.bind(this)}>
+                    <i class="material-icons left">send</i>
+                    Save selected
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </nav>
         </div>
       )
     } else {
@@ -143,7 +161,11 @@ class App extends Component {
   renderContent() {
     const { serverConnected, socketConnected } = this.props
     if (serverConnected && socketConnected) {
-      return <ul className="collection">{this.renderTabs()}</ul>
+      return (
+        <div>
+          <ul className="collection">{this.renderTabs()}</ul>
+        </div>
+      )
     } else {
       return null
     }
@@ -160,12 +182,6 @@ class App extends Component {
     return (
       <div>
         {this.renderButtons()}
-        <input
-          className="input-field"
-          placeholder="Enter tag name"
-          value={this.state.tagTitle}
-          onChange={event => this.onInputChange(event.target.value)}
-        />
         <div className="collection">{this.renderContent()}</div>
       </div>
     )
@@ -178,6 +194,7 @@ class App extends Component {
 function mapStateToProps(store) {
   return {
     windowTabs: mapToArr(store.data.tabs),
+    selectedCount: store.data.selectedCount,
     serverConnected: store.state.serverConnected,
     serverNeedAuth: store.state.serverNeedAuth,
     socketConnected: store.state.socketConnected,

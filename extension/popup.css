@@ -16,3 +16,8 @@ body {
   margin-right: 10px;
   background: #333 !important;
 }
+
+nav {
+  background: white !important;
+  height: auto !important;
+}
