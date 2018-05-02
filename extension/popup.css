@@ -25,3 +25,7 @@ nav {
   background: white !important;
   /* height: auto !important; */
 }
+
+.collection a.collection-item {
+  cursor: default;
+}

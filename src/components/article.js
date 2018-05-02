@@ -6,17 +6,19 @@ class Article extends Component {
   onSelectTab(event) {
     const { tab, tabChangeSelect } = this.props
     tabChangeSelect({ tab })
+    event.stopPropagation()
+  }
+
+  onClickTab(event) {
+    const { tab } = this.props
+    chrome.tabs.update(tab.id, { active: true })
+    event.stopPropagation()
   }
 
   render() {
     const { tab } = this.props
     return (
-      <a
-        className="collection-item"
-        key={tab.id}
-        target="_blank"
-        href={tab.url}
-      >
+      <a className="collection-item" key={tab.id}>
         <label>
           <input
             key={tab.id}
@@ -26,7 +28,7 @@ class Article extends Component {
           />
           <span>&nbsp;</span>
         </label>
-        <h6>{tab.title}</h6>
+        <h6 onClick={ev => this.onClickTab(ev)}>{tab.title}</h6>
       </a>
     )
   }
