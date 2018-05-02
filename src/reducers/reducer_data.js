@@ -30,17 +30,17 @@ function selectedCount(tabs) {
 
 export default (state = defaultState, action) => {
   const { type, payload } = action
+  let new_state = null
   switch (type) {
     case STORE_CURRENT_TABS:
       const { windowTabs } = payload
-
-      return state
-        .set('tabs', arrToMap(windowTabs, TabRecord))
-        .set('selectedCount', selectedCount(windowTabs))
+      new_state = state.set('tabs', arrToMap(windowTabs, TabRecord))
+      return new_state.set('selectedCount', selectedCount(new_state.tabs))
 
     case CHANGE_SELECT:
       const { tab } = payload
-      return state.setIn(['tabs', tab.id, 'selected'], !tab.selected)
+      new_state = state.setIn(['tabs', tab.id, 'selected'], !tab.selected)
+      return new_state.set('selectedCount', selectedCount(new_state.tabs))
 
     default:
       return state
