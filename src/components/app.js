@@ -3,6 +3,10 @@ import { connect } from 'react-redux'
 import { checkServer, storeCurrentTabs } from '../actions'
 import { sendTabs } from '../actions/socket'
 import { BACKEND_URL } from '../constants'
+import { mapToArr } from '../helpers'
+
+import Article from './article'
+import { tabChangeSelectAll } from '../actions'
 
 import Nested from './nested-component'
 
@@ -16,12 +20,21 @@ class App extends Component {
   }
 
   componentWillMount() {
+    const tab_pattern = 'http'
     chrome.tabs.query({ currentWindow: true }, tabs => {
       this.props.storeCurrentTabs(
-        tabs.map(tab => {
-          const { id, index, title, url, favIconUrl } = tab
-          return { id, index, title, url, favIconUrl }
-        })
+        tabs
+          .filter(tab => {
+            if (tab.url && tab.url.substr(0, 4) === tab_pattern) {
+              return true
+            } else {
+              return false
+            }
+          })
+          .map(tab => {
+            const { id, index, title, url, favIconUrl } = tab
+            return { id, index, title, url, favIconUrl, selected: true }
+          })
       )
     })
   }
@@ -43,17 +56,23 @@ class App extends Component {
     const portalUrl = `${BACKEND_URL}`
     const absolutePath = `${BACKEND_URL}/${path}`
 
-    const firstTab = this.props.windowTabs[0]
+    const { windowTabs } = this.props
+
+    const firstTab = windowTabs[0]
+
+    const selectedTabs = windowTabs
+      .map(tab => tab.toJS())
+      .filter(tab => tab.selected)
 
     if (tabsSaved) {
-      this.props.windowTabs.map(item => {
+      selectedTabs.map(item => {
         if (item.index > 0) {
           chrome.tabs.remove(item.id)
         }
       })
     }
 
-    if (firstTab.url.indexOf(portalUrl) < 0) {
+    if (!firstTab || firstTab.url.indexOf(portalUrl) < 0) {
       chrome.tabs.create({
         url: `${absolutePath}`,
         index: 0
@@ -62,7 +81,7 @@ class App extends Component {
         chrome.tabs.remove(firstTab.id)
       }
     } else {
-      console.log(firstTab.url, absolutePath)
+      //console.log(firstTab.url, absolutePath)
       if (firstTab.url === absolutePath) {
         chrome.tabs.update(firstTab.id, { active: true })
       } else {
@@ -78,35 +97,73 @@ class App extends Component {
   }
 
   sendToServer() {
-    const { serverConnected, socketConnected } = this.props
+    const { serverConnected, socketConnected, windowTabs } = this.props
+
     if (serverConnected && socketConnected) {
       this.props.sendTabs({
         tag_title: this.state.tagTitle,
-        tabs: this.props.windowTabs
+        tabs: windowTabs.map(tab => tab.toJS()).filter(tab => tab.selected)
       })
     }
+  }
+
+  onSelectAll() {
+    const { windowTabs, tabChangeSelectAll } = this.props
+    if (windowTabs.length > 0) {
+      const flag = !windowTabs[0].selected
+      tabChangeSelectAll({ checked: flag })
+    }
+  }
+
+  onCloseSelected() {
+    const { windowTabs } = this.props
+    const selectedTabs = windowTabs
+      .map(tab => tab.toJS())
+      .filter(tab => tab.selected)
+      .map(item => {
+        chrome.tabs.remove(item.id)
+      })
+    window.close()
   }
 
   renderButtons() {
     const { serverConnected, socketConnected } = this.props
     if (serverConnected && socketConnected) {
       return (
-        <div>
-          <button
-            className="btn indigo"
-            onClick={this.onDisplayTabs.bind(this)}
-          >
-            <i class="material-icons left">input</i>
-            Display tabs list
-          </button>
+        <div className="interface">
+          <input
+            className="input-field"
+            placeholder="Enter tag name"
+            value={this.state.tagTitle}
+            onChange={event => this.onInputChange(event.target.value)}
+          />
 
-          <button
-            className="btn indigo right"
-            onClick={this.sendToServer.bind(this)}
-          >
-            <i class="material-icons left">send</i>
-            Send to server
-          </button>
+          <ul>
+            <li>
+              <a className="btn" onClick={() => this.onSelectAll()}>
+                <i class="material-icons left">select_all</i>
+                {this.props.selectedCount}
+              </a>
+            </li>
+            <li>
+              <a className="btn" onClick={() => this.onCloseSelected()}>
+                <i class="material-icons left">clear_all</i>
+                Close Selected
+              </a>
+            </li>
+            <li>
+              <a className="btn" onClick={this.onDisplayTabs.bind(this)}>
+                <i class="material-icons left">input</i>
+                Show itemli
+              </a>
+            </li>
+            <li>
+              <a className="btn" onClick={this.sendToServer.bind(this)}>
+                <i class="material-icons left">send</i>
+                Save selected
+              </a>
+            </li>
+          </ul>
         </div>
       )
     } else {
@@ -124,9 +181,13 @@ class App extends Component {
   renderContent() {
     const { serverConnected, socketConnected } = this.props
     if (serverConnected && socketConnected) {
-      return <ul className="collection">{this.renderTabs()}</ul>
+      return (
+        <div className="content">
+          <ul className="collection">{this.renderTabs()}</ul>
+        </div>
+      )
     } else {
-      return <div />
+      return null
     }
   }
 
@@ -134,26 +195,14 @@ class App extends Component {
     if (!this.props.windowTabs) return <div />
 
     return this.props.windowTabs.map(tab => {
-      return (
-        <li className="collection-item" key={tab.id}>
-          <a target="_blank" href={tab.url}>
-            {tab.title}
-          </a>
-        </li>
-      )
+      return <Article tab={tab.toJS()} />
     })
   }
   render() {
     return (
       <div>
         {this.renderButtons()}
-        <input
-          className="input-field"
-          placeholder="Enter tag name"
-          value={this.state.tagTitle}
-          onChange={event => this.onInputChange(event.target.value)}
-        />
-        {this.renderContent()}
+        <div className="collection">{this.renderContent()}</div>
       </div>
     )
   }
@@ -164,7 +213,8 @@ class App extends Component {
 
 function mapStateToProps(store) {
   return {
-    windowTabs: store.state.windowTabs,
+    windowTabs: mapToArr(store.data.tabs),
+    selectedCount: store.data.selectedCount,
     serverConnected: store.state.serverConnected,
     serverNeedAuth: store.state.serverNeedAuth,
     socketConnected: store.state.socketConnected,
@@ -176,5 +226,6 @@ function mapStateToProps(store) {
 export default connect(mapStateToProps, {
   checkServer,
   storeCurrentTabs,
-  sendTabs
+  sendTabs,
+  tabChangeSelectAll
 })(App)

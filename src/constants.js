@@ -11,3 +11,6 @@ export const SOCKET_ERROR = 'SOCKET_ERROR'
 export const STORE_CURRENT_TABS = 'STORE_CURRENT_TABS'
 export const SEND_TABS = 'SEND_TABS'
 export const SEND_TABS_OK = 'SEND_TABS_OK'
+
+export const CHANGE_SELECT = 'CHANGE_SELECT'
+export const CHANGE_SELECT_ALL = 'CHANGE_SELECT_ALL'
