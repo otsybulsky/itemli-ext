@@ -7,6 +7,7 @@ import { mapToArr } from '../helpers'
 
 import Article from './article'
 import { tabChangeSelectAll } from '../actions'
+import confirm from './dialogs/confirm'
 
 import Nested from './nested-component'
 
@@ -116,14 +117,15 @@ class App extends Component {
   }
 
   onCloseSelected() {
-    const { windowTabs } = this.props
-    const selectedTabs = windowTabs
-      .map(tab => tab.toJS())
-      .filter(tab => tab.selected)
-      .map(item => {
-        chrome.tabs.remove(item.id)
-      })
-    window.close()
+    confirm('Are you sure')
+    // const { windowTabs } = this.props
+    // const selectedTabs = windowTabs
+    //   .map(tab => tab.toJS())
+    //   .filter(tab => tab.selected)
+    //   .map(item => {
+    //     chrome.tabs.remove(item.id)
+    //   })
+    // window.close()
   }
 
   renderButtons() {
