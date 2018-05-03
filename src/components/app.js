@@ -117,15 +117,22 @@ class App extends Component {
   }
 
   onCloseSelected() {
-    confirm('Are you sure')
-    // const { windowTabs } = this.props
-    // const selectedTabs = windowTabs
-    //   .map(tab => tab.toJS())
-    //   .filter(tab => tab.selected)
-    //   .map(item => {
-    //     chrome.tabs.remove(item.id)
-    //   })
-    // window.close()
+    const { selectedCount } = this.props
+    confirm(`Confirm close ${selectedCount} tabs`).then(
+      () => {
+        const { windowTabs } = this.props
+        const selectedTabs = windowTabs
+          .map(tab => tab.toJS())
+          .filter(tab => tab.selected)
+          .map(item => {
+            chrome.tabs.remove(item.id)
+          })
+        window.close()
+      },
+      () => {
+        //cancel
+      }
+    )
   }
 
   renderButtons() {
