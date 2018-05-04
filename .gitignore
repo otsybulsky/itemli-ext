@@ -4,4 +4,4 @@ yarn.lock
 extension/dist
 node_modules
 package-lock.json
-/config/dev.env
+dev.env
