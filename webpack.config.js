@@ -29,6 +29,11 @@ const config = {
 }
 
 if (process.env.NODE_ENV === 'production') {
+  config.plugins.push(
+    new dotenv({
+      path: './config/prod.env'
+    })
+  )
 } else {
   config.plugins.push(
     new dotenv({
