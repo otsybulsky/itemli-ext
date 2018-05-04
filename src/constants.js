@@ -1,5 +1,5 @@
-export const BACKEND_URL = 'http://localhost:4000'
-export const BACKEND_SOCKET = 'ws://localhost:4000/socket'
+export const BACKEND_URL = process.env.BACKEND_URL
+export const BACKEND_SOCKET = process.env.BACKEND_SOCKET
 
 export const TEST = 'TEST'
 
