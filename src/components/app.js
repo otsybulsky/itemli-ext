@@ -102,7 +102,7 @@ class App extends Component {
 
     if (serverConnected && socketConnected) {
       this.props.sendTabs({
-        tag_title: this.state.tagTitle,
+        tag: { title: this.state.tagTitle },
         tabs: windowTabs.map(tab => tab.toJS()).filter(tab => tab.selected)
       })
     }
@@ -232,9 +232,12 @@ function mapStateToProps(store) {
   }
 }
 
-export default connect(mapStateToProps, {
-  checkServer,
-  storeCurrentTabs,
-  sendTabs,
-  tabChangeSelectAll
-})(App)
+export default connect(
+  mapStateToProps,
+  {
+    checkServer,
+    storeCurrentTabs,
+    sendTabs,
+    tabChangeSelectAll
+  }
+)(App)
