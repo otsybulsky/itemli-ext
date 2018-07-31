@@ -25,7 +25,7 @@ class Article extends Component {
             key={tab.id}
             type="checkbox"
             onClick={ev => this.onSelectTab(ev)}
-            checked={tab.selected ? 'checked' : ''}
+            defaultChecked={tab.selected ? 'checked' : ''}
           />
           <span>&nbsp;</span>
         </label>
@@ -35,4 +35,7 @@ class Article extends Component {
   }
 }
 
-export default connect(null, { tabChangeSelect })(Article)
+export default connect(
+  null,
+  { tabChangeSelect }
+)(Article)
