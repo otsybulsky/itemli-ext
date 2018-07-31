@@ -188,16 +188,11 @@ class App extends Component {
   }
 
   renderContent() {
-    const { serverConnected, socketConnected } = this.props
-    if (serverConnected && socketConnected) {
-      return (
-        <div className="content">
-          <ul className="collection">{this.renderTabs()}</ul>
-        </div>
-      )
-    } else {
-      return null
-    }
+    return (
+      <div className="content">
+        <ul className="collection">{this.renderTabs()}</ul>
+      </div>
+    )
   }
 
   renderTabs() {
