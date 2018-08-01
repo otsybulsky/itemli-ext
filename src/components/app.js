@@ -135,6 +135,8 @@ class App extends Component {
     )
   }
 
+  onShowSettings() {}
+
   renderButtons() {
     const { serverConnected, socketConnected } = this.props
     if (serverConnected && socketConnected) {
@@ -146,6 +148,10 @@ class App extends Component {
             value={this.state.tagTitle}
             onChange={event => this.onInputChange(event.target.value)}
           />
+
+          <a className="btn right" onClick={() => this.onShowSettings()}>
+            <i className="material-icons">settings</i>
+          </a>
 
           <ul>
             <li>
@@ -181,7 +187,10 @@ class App extends Component {
       }
       return (
         <div>
-          <h5>Connecting to server ...</h5>
+          <a className="btn" onClick={() => this.onShowSettings()}>
+            <i className="material-icons left">settings</i>
+            Connecting to server ...
+          </a>
         </div>
       )
     }
