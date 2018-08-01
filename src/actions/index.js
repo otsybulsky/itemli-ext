@@ -5,7 +5,9 @@ import {
   CHECK_SERVER_END,
   BACKEND_URL,
   CHANGE_SELECT,
-  CHANGE_SELECT_ALL
+  CHANGE_SELECT_ALL,
+  SETTINGS_EDIT,
+  SETTINGS_EDIT_CANCEL
 } from '../constants'
 
 import { createSocket } from './socket'
@@ -16,6 +18,18 @@ export function testEvent() {
   return {
     type: TEST,
     payload: 'test'
+  }
+}
+
+export function settingsEdit(params) {
+  return {
+    type: SETTINGS_EDIT
+  }
+}
+
+export function settingsEditCancel(params) {
+  return {
+    type: SETTINGS_EDIT_CANCEL
   }
 }
 

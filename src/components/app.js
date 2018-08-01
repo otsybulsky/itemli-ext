@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { checkServer, storeCurrentTabs } from '../actions'
+import { checkServer, storeCurrentTabs, settingsEdit } from '../actions'
 import { sendTabs } from '../actions/socket'
 import { BACKEND_URL } from '../constants'
 import { mapToArr } from '../helpers'
@@ -8,6 +8,7 @@ import { mapToArr } from '../helpers'
 import Article from './article'
 import { tabChangeSelectAll } from '../actions'
 import confirm from './dialogs/confirm'
+import Settings from './settings'
 
 import Nested from './nested-component'
 
@@ -135,7 +136,9 @@ class App extends Component {
     )
   }
 
-  onShowSettings() {}
+  onShowSettings() {
+    this.props.settingsEdit()
+  }
 
   renderButtons() {
     const { serverConnected, socketConnected } = this.props
@@ -212,12 +215,21 @@ class App extends Component {
     })
   }
   render() {
-    return (
-      <div>
-        {this.renderButtons()}
-        <div className="collection">{this.renderContent()}</div>
-      </div>
-    )
+    const { showSettings } = this.props
+    if (!showSettings) {
+      return (
+        <div>
+          {this.renderButtons()}
+          <div className="collection">{this.renderContent()}</div>
+        </div>
+      )
+    } else {
+      return (
+        <div>
+          <Settings />
+        </div>
+      )
+    }
   }
   onInputChange(tagTitle) {
     this.setState({ tagTitle })
@@ -232,7 +244,8 @@ function mapStateToProps(store) {
     serverNeedAuth: store.state.serverNeedAuth,
     socketConnected: store.state.socketConnected,
     retryConnectServer: store.state.retryConnectServer,
-    tabsSaved: store.state.tabsSaved
+    tabsSaved: store.state.tabsSaved,
+    showSettings: store.state.showSettings
   }
 }
 
@@ -242,6 +255,7 @@ export default connect(
     checkServer,
     storeCurrentTabs,
     sendTabs,
-    tabChangeSelectAll
+    tabChangeSelectAll,
+    settingsEdit
   }
 )(App)
