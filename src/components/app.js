@@ -1,6 +1,11 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { checkServer, storeCurrentTabs, settingsEdit } from '../actions'
+import {
+  checkServer,
+  storeCurrentTabs,
+  settingsEdit,
+  settingsCheck
+} from '../actions'
 import { sendTabs } from '../actions/socket'
 import { BACKEND_URL } from '../constants'
 import { mapToArr } from '../helpers'
@@ -17,11 +22,13 @@ class App extends Component {
     super(props)
 
     this.state = {
-      tagTitle: 'new tag'
+      tagTitle: ''
     }
   }
 
   componentWillMount() {
+    this.props.settingsCheck()
+
     const tab_pattern = 'http'
     chrome.tabs.query({ currentWindow: true }, tabs => {
       this.props.storeCurrentTabs(
@@ -41,11 +48,15 @@ class App extends Component {
     })
   }
 
-  componentDidMount() {
-    this.props.checkServer()
-  }
-
   componentWillReceiveProps(nextProps) {
+    const { retryConnectServer, checkServer, settings } = nextProps
+
+    if (settings) {
+      if (retryConnectServer) {
+        checkServer(settings)
+      }
+    }
+
     if (nextProps.serverConnected && nextProps.serverNeedAuth) {
       this.activatePortal('signin')
     }
@@ -185,17 +196,20 @@ class App extends Component {
         </div>
       )
     } else {
-      if (this.props.retryConnectServer) {
-        this.props.checkServer()
+      const { settings } = this.props
+
+      if (settings) {
+        return (
+          <div>
+            <a className="btn" onClick={() => this.onShowSettings()}>
+              <i className="material-icons left">settings</i>
+              `Connecting to server {settings.currentApi}... `
+            </a>
+          </div>
+        )
+      } else {
+        return <div>`Read settings... `</div>
       }
-      return (
-        <div>
-          <a className="btn" onClick={() => this.onShowSettings()}>
-            <i className="material-icons left">settings</i>
-            Connecting to server ...
-          </a>
-        </div>
-      )
     }
   }
 
@@ -245,7 +259,8 @@ function mapStateToProps(store) {
     socketConnected: store.state.socketConnected,
     retryConnectServer: store.state.retryConnectServer,
     tabsSaved: store.state.tabsSaved,
-    showSettings: store.state.showSettings
+    showSettings: store.state.showSettings,
+    settings: store.state.settings
   }
 }
 
@@ -256,6 +271,7 @@ export default connect(
     storeCurrentTabs,
     sendTabs,
     tabChangeSelectAll,
-    settingsEdit
+    settingsEdit,
+    settingsCheck
   }
 )(App)

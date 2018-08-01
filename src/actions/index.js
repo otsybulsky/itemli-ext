@@ -7,7 +7,8 @@ import {
   CHANGE_SELECT,
   CHANGE_SELECT_ALL,
   SETTINGS_EDIT,
-  SETTINGS_EDIT_CANCEL
+  SETTINGS_EDIT_CANCEL,
+  SETTINGS_CHECK
 } from '../constants'
 
 import { createSocket } from './socket'
@@ -18,6 +19,47 @@ export function testEvent() {
   return {
     type: TEST,
     payload: 'test'
+  }
+}
+
+export function settingsCheck(params) {
+  const buildVersion = 1 // number current actual version of settings
+
+  let settings = JSON.parse(localStorage.getItem('settings'))
+  let saveSettings = false
+
+  if (!settings) {
+    const mainApi = 'https://itemli.gigalixirapp.com'
+    settings = {
+      buildVersion: 0,
+      api: [mainApi],
+      currentApi: mainApi
+    }
+    saveSettings = true
+  }
+
+  if (settings.buildVersion !== buildVersion) {
+    if (settings.buildVersion < 1) {
+      const mainApi = 'https://localhost:4000'
+      settings.api = [mainApi, ...settings.api]
+      settings.currentApi = mainApi
+      settings.buildVersion = 1
+    }
+    saveSettings = true
+  }
+
+  if (saveSettings) {
+    localStorage.setItem('settings', JSON.stringify(settings))
+  }
+
+  settings.socketApi = `wss${settings.currentApi.replace(
+    /https|http/,
+    ''
+  )}/socket`
+
+  return {
+    type: SETTINGS_CHECK,
+    payload: settings
   }
 }
 
@@ -54,18 +96,18 @@ export function storeCurrentTabs(params) {
   }
 }
 
-function startCheckServer() {
+function startCheckServer(params) {
   return {
     type: CHECK_SERVER_START,
-    payload: null
+    payload: params
   }
 }
 
-function endCheckServer(data) {
+function endCheckServer(data, socketApi) {
   return dispatch => {
     const { status, params } = data
     if (status === 'ok') {
-      dispatch(createSocket(params.token, params.channelId))
+      dispatch(createSocket(socketApi, params.token, params.channelId))
     }
 
     dispatch({
@@ -75,14 +117,14 @@ function endCheckServer(data) {
   }
 }
 
-export function checkServer() {
+export function checkServer(settings) {
   return dispatch => {
-    dispatch(startCheckServer())
+    dispatch(startCheckServer(settings))
 
     axios
-      .get(`${BACKEND_URL}/api/check`, { withCredentials: true })
+      .get(`${settings.currentApi}/api/check`, { withCredentials: true })
       .then(response => {
-        dispatch(endCheckServer(response.data))
+        dispatch(endCheckServer(response.data, settings.socketApi))
       })
       .catch(error => {
         dispatch(endCheckServer({ status: 'error', params: error }))

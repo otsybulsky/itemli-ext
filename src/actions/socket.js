@@ -1,5 +1,4 @@
 import {
-  BACKEND_SOCKET,
   SOCKET_CONNECTED,
   SOCKET_ERROR,
   SEND_TABS,
@@ -10,9 +9,9 @@ import { Socket } from 'phoenix'
 let socket = null
 let channel = null
 
-export function createSocket(userToken, channelId) {
+export function createSocket(socketApi, userToken, channelId) {
   return dispatch => {
-    socket = new Socket(BACKEND_SOCKET, {
+    socket = new Socket(socketApi, {
       params: { token: userToken }
     })
 

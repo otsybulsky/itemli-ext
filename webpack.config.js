@@ -24,22 +24,10 @@ const config = {
     extensions: ['.js', '.jsx'],
     modules: ['src', 'node_modules']
   },
-  plugins: [new webpack.EnvironmentPlugin(['NODE_ENV'])],
   mode: process.env.NODE_ENV
 }
 
-if (process.env.NODE_ENV === 'production') {
-  config.plugins.push(
-    new dotenv({
-      path: './config/prod.env'
-    })
-  )
-} else {
-  config.plugins.push(
-    new dotenv({
-      path: './config/dev.env'
-    })
-  )
+if (process.env.NODE_ENV === 'development') {
   config.devtool = 'source-map'
 }
 

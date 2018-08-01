@@ -6,7 +6,8 @@ import {
   SOCKET_ERROR,
   SEND_TABS_OK,
   SETTINGS_EDIT,
-  SETTINGS_EDIT_CANCEL
+  SETTINGS_EDIT_CANCEL,
+  SETTINGS_CHECK
 } from '../constants'
 
 const INIT_STATE = {
@@ -14,13 +15,19 @@ const INIT_STATE = {
   serverNeedAuth: null,
   lastError: null,
   socketConnected: null,
-  retryConnectServer: null,
+  retryConnectServer: true,
   tabsSaved: null,
-  showSettings: false
+  showSettings: false,
+  settings: null
 }
 
 export default function(state = INIT_STATE, { type, payload }) {
   switch (type) {
+    case SETTINGS_CHECK:
+      return {
+        ...state,
+        settings: payload
+      }
     case SEND_TABS_OK:
       return {
         ...state,
