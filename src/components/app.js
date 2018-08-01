@@ -150,25 +150,25 @@ class App extends Component {
           <ul>
             <li>
               <a className="btn" onClick={() => this.onSelectAll()}>
-                <i class="material-icons left">select_all</i>
+                <i className="material-icons left">select_all</i>
                 {this.props.selectedCount}
               </a>
             </li>
             <li>
               <a className="btn" onClick={() => this.onCloseSelected()}>
-                <i class="material-icons left">clear_all</i>
+                <i className="material-icons left">clear_all</i>
                 Close Selected
               </a>
             </li>
             <li>
               <a className="btn" onClick={this.onDisplayTabs.bind(this)}>
-                <i class="material-icons left">input</i>
+                <i className="material-icons left">input</i>
                 Show itemli
               </a>
             </li>
             <li>
               <a className="btn" onClick={this.sendToServer.bind(this)}>
-                <i class="material-icons left">send</i>
+                <i className="material-icons left">send</i>
                 Save selected
               </a>
             </li>
@@ -188,23 +188,18 @@ class App extends Component {
   }
 
   renderContent() {
-    const { serverConnected, socketConnected } = this.props
-    if (serverConnected && socketConnected) {
-      return (
-        <div className="content">
-          <ul className="collection">{this.renderTabs()}</ul>
-        </div>
-      )
-    } else {
-      return null
-    }
+    return (
+      <div className="content">
+        <ul className="collection">{this.renderTabs()}</ul>
+      </div>
+    )
   }
 
   renderTabs() {
     if (!this.props.windowTabs) return <div />
 
     return this.props.windowTabs.map(tab => {
-      return <Article tab={tab.toJS()} />
+      return <Article key={tab.id} tab={tab.toJS()} />
     })
   }
   render() {

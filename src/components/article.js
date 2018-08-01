@@ -18,14 +18,16 @@ class Article extends Component {
 
   render() {
     const { tab } = this.props
+    const isCheck = tab.selected ? 'checked' : ''
     return (
       <a className="collection-item" key={tab.id}>
         <label>
           <input
+            readOnly
             key={tab.id}
             type="checkbox"
             onClick={ev => this.onSelectTab(ev)}
-            checked={tab.selected ? 'checked' : ''}
+            checked={isCheck}
           />
           <span>&nbsp;</span>
         </label>
@@ -35,4 +37,7 @@ class Article extends Component {
   }
 }
 
-export default connect(null, { tabChangeSelect })(Article)
+export default connect(
+  null,
+  { tabChangeSelect }
+)(Article)
