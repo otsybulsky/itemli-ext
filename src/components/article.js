@@ -18,14 +18,16 @@ class Article extends Component {
 
   render() {
     const { tab } = this.props
+    const isCheck = tab.selected ? 'checked' : ''
     return (
       <a className="collection-item" key={tab.id}>
         <label>
           <input
+            readOnly
             key={tab.id}
             type="checkbox"
             onClick={ev => this.onSelectTab(ev)}
-            defaultChecked={tab.selected ? 'checked' : ''}
+            checked={isCheck}
           />
           <span>&nbsp;</span>
         </label>
