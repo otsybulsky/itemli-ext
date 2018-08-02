@@ -4,7 +4,11 @@ import {
   CHECK_SERVER_END,
   SOCKET_CONNECTED,
   SOCKET_ERROR,
-  SEND_TABS_OK
+  SEND_TABS_OK,
+  SETTINGS_EDIT,
+  SETTINGS_EDIT_CANCEL,
+  SETTINGS_EDIT_SAVE,
+  SETTINGS_CHECK
 } from '../constants'
 
 const INIT_STATE = {
@@ -12,12 +16,19 @@ const INIT_STATE = {
   serverNeedAuth: null,
   lastError: null,
   socketConnected: null,
-  retryConnectServer: null,
-  tabsSaved: null
+  retryConnectServer: true,
+  tabsSaved: null,
+  showSettings: false,
+  settings: null
 }
 
 export default function(state = INIT_STATE, { type, payload }) {
   switch (type) {
+    case SETTINGS_CHECK:
+      return {
+        ...state,
+        settings: payload
+      }
     case SEND_TABS_OK:
       return {
         ...state,
@@ -58,6 +69,22 @@ export default function(state = INIT_STATE, { type, payload }) {
       return { ...state, socketConnected: true, serverConnected: true }
     case SOCKET_ERROR:
       return { ...state, socketConnected: false, lastError: payload }
+    case SETTINGS_EDIT:
+      return {
+        ...state,
+        showSettings: !state.showSettings
+      }
+    case SETTINGS_EDIT_CANCEL:
+      return {
+        ...state,
+        showSettings: false
+      }
+    case SETTINGS_EDIT_SAVE:
+      return {
+        ...state,
+        showSettings: false,
+        retryConnectServer: true
+      }
 
     default:
       return state

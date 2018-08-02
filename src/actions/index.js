@@ -5,7 +5,11 @@ import {
   CHECK_SERVER_END,
   BACKEND_URL,
   CHANGE_SELECT,
-  CHANGE_SELECT_ALL
+  CHANGE_SELECT_ALL,
+  SETTINGS_EDIT,
+  SETTINGS_EDIT_CANCEL,
+  SETTINGS_EDIT_SAVE,
+  SETTINGS_CHECK
 } from '../constants'
 
 import { createSocket } from './socket'
@@ -16,6 +20,81 @@ export function testEvent() {
   return {
     type: TEST,
     payload: 'test'
+  }
+}
+
+export function settingsCheck(params) {
+  const buildVersion = 1 // number current actual version of settings
+
+  let settings = JSON.parse(localStorage.getItem('settings'))
+  let saveSettings = false
+
+  if (!settings) {
+    const mainApi = (settings = {
+      buildVersion: 0,
+      currentApi: 'https://localhost:4000'
+    })
+    saveSettings = true
+  }
+
+  // if (settings.buildVersion !== buildVersion) {
+  //   if (settings.buildVersion < 1) {
+  //     settings.buildVersion = 1
+  //   }
+  //   saveSettings = true
+  // }
+
+  settings.socketApi = `wss${settings.currentApi.replace(
+    /https|http/,
+    ''
+  )}/socket`
+
+  if (saveSettings) {
+    localStorage.setItem('settings', JSON.stringify(settings))
+  }
+
+  return {
+    type: SETTINGS_CHECK,
+    payload: settings
+  }
+}
+
+export function settingsEdit(params) {
+  return {
+    type: SETTINGS_EDIT
+  }
+}
+
+export function settingsEditCancel(params) {
+  return {
+    type: SETTINGS_EDIT_CANCEL
+  }
+}
+
+export function settingsEditSave(params) {
+  return dispatch => {
+    const { settings, changes } = params
+    let saveSettings = false
+
+    if (settings.currentApi !== changes.currentApi) {
+      settings.currentApi = changes.currentApi
+      settings.socketApi = `wss${settings.currentApi.replace(
+        /https|http/,
+        ''
+      )}/socket`
+      localStorage.setItem('settings', JSON.stringify(settings))
+      saveSettings = true
+    }
+
+    if (saveSettings) {
+      dispatch({
+        type: SETTINGS_EDIT_SAVE,
+        payload: params
+      })
+      dispatch(settingsCheck())
+    } else {
+      dispatch(settingsEditCancel())
+    }
   }
 }
 
@@ -40,18 +119,18 @@ export function storeCurrentTabs(params) {
   }
 }
 
-function startCheckServer() {
+function startCheckServer(params) {
   return {
     type: CHECK_SERVER_START,
-    payload: null
+    payload: params
   }
 }
 
-function endCheckServer(data) {
+function endCheckServer(data, socketApi) {
   return dispatch => {
     const { status, params } = data
     if (status === 'ok') {
-      dispatch(createSocket(params.token, params.channelId))
+      dispatch(createSocket(socketApi, params.token, params.channelId))
     }
 
     dispatch({
@@ -61,14 +140,14 @@ function endCheckServer(data) {
   }
 }
 
-export function checkServer() {
+export function checkServer(settings) {
   return dispatch => {
-    dispatch(startCheckServer())
+    dispatch(startCheckServer(settings))
 
     axios
-      .get(`${BACKEND_URL}/api/check`, { withCredentials: true })
+      .get(`${settings.currentApi}/api/check`, { withCredentials: true })
       .then(response => {
-        dispatch(endCheckServer(response.data))
+        dispatch(endCheckServer(response.data, settings.socketApi))
       })
       .catch(error => {
         dispatch(endCheckServer({ status: 'error', params: error }))

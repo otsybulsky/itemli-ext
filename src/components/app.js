@@ -1,13 +1,19 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { checkServer, storeCurrentTabs } from '../actions'
+import {
+  checkServer,
+  storeCurrentTabs,
+  settingsEdit,
+  settingsCheck
+} from '../actions'
 import { sendTabs } from '../actions/socket'
-import { BACKEND_URL } from '../constants'
+
 import { mapToArr } from '../helpers'
 
 import Article from './article'
 import { tabChangeSelectAll } from '../actions'
 import confirm from './dialogs/confirm'
+import Settings from './settings'
 
 import Nested from './nested-component'
 
@@ -16,11 +22,13 @@ class App extends Component {
     super(props)
 
     this.state = {
-      tagTitle: 'new tag'
+      tagTitle: ''
     }
   }
 
   componentWillMount() {
+    this.props.settingsCheck()
+
     const tab_pattern = 'http'
     chrome.tabs.query({ currentWindow: true }, tabs => {
       this.props.storeCurrentTabs(
@@ -40,11 +48,15 @@ class App extends Component {
     })
   }
 
-  componentDidMount() {
-    this.props.checkServer()
-  }
-
   componentWillReceiveProps(nextProps) {
+    const { retryConnectServer, checkServer, settings } = nextProps
+
+    if (settings) {
+      if (retryConnectServer) {
+        checkServer(settings)
+      }
+    }
+
     if (nextProps.serverConnected && nextProps.serverNeedAuth) {
       this.activatePortal('signin')
     }
@@ -54,10 +66,9 @@ class App extends Component {
   }
 
   activatePortal(path, tabsSaved) {
-    const portalUrl = `${BACKEND_URL}`
-    const absolutePath = `${BACKEND_URL}/${path}`
-
-    const { windowTabs } = this.props
+    const { windowTabs, settings } = this.props
+    const portalUrl = settings.currentApi
+    const absolutePath = `${portalUrl}/${path}`
 
     const firstTab = windowTabs[0]
 
@@ -135,6 +146,10 @@ class App extends Component {
     )
   }
 
+  onShowSettings() {
+    this.props.settingsEdit()
+  }
+
   renderButtons() {
     const { serverConnected, socketConnected } = this.props
     if (serverConnected && socketConnected) {
@@ -146,6 +161,10 @@ class App extends Component {
             value={this.state.tagTitle}
             onChange={event => this.onInputChange(event.target.value)}
           />
+
+          <a className="btn right" onClick={() => this.onShowSettings()}>
+            <i className="material-icons">settings</i>
+          </a>
 
           <ul>
             <li>
@@ -176,14 +195,20 @@ class App extends Component {
         </div>
       )
     } else {
-      if (this.props.retryConnectServer) {
-        this.props.checkServer()
+      const { settings } = this.props
+
+      if (settings) {
+        return (
+          <div>
+            <a className="btn" onClick={() => this.onShowSettings()}>
+              <i className="material-icons left">settings</i>
+              `Connecting to server {settings.currentApi}... `
+            </a>
+          </div>
+        )
+      } else {
+        return <div>`Read settings... `</div>
       }
-      return (
-        <div>
-          <h5>Connecting to server ...</h5>
-        </div>
-      )
     }
   }
 
@@ -203,12 +228,21 @@ class App extends Component {
     })
   }
   render() {
-    return (
-      <div>
-        {this.renderButtons()}
-        <div className="collection">{this.renderContent()}</div>
-      </div>
-    )
+    const { showSettings } = this.props
+    if (!showSettings) {
+      return (
+        <div>
+          {this.renderButtons()}
+          <div className="collection">{this.renderContent()}</div>
+        </div>
+      )
+    } else {
+      return (
+        <div>
+          <Settings />
+        </div>
+      )
+    }
   }
   onInputChange(tagTitle) {
     this.setState({ tagTitle })
@@ -223,7 +257,9 @@ function mapStateToProps(store) {
     serverNeedAuth: store.state.serverNeedAuth,
     socketConnected: store.state.socketConnected,
     retryConnectServer: store.state.retryConnectServer,
-    tabsSaved: store.state.tabsSaved
+    tabsSaved: store.state.tabsSaved,
+    showSettings: store.state.showSettings,
+    settings: store.state.settings
   }
 }
 
@@ -233,6 +269,8 @@ export default connect(
     checkServer,
     storeCurrentTabs,
     sendTabs,
-    tabChangeSelectAll
+    tabChangeSelectAll,
+    settingsEdit,
+    settingsCheck
   }
 )(App)

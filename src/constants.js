@@ -1,6 +1,3 @@
-export const BACKEND_URL = process.env.BACKEND_URL
-export const BACKEND_SOCKET = process.env.BACKEND_SOCKET
-
 export const TEST = 'TEST'
 
 export const CHECK_SERVER_START = 'CHECK_SERVER_START'
@@ -14,3 +11,8 @@ export const SEND_TABS_OK = 'SEND_TABS_OK'
 
 export const CHANGE_SELECT = 'CHANGE_SELECT'
 export const CHANGE_SELECT_ALL = 'CHANGE_SELECT_ALL'
+
+export const SETTINGS_CHECK = 'SETTINGS_CHECK'
+export const SETTINGS_EDIT = 'SETTINGS_EDIT'
+export const SETTINGS_EDIT_CANCEL = 'SETTINGS_EDIT_CANCEL'
+export const SETTINGS_EDIT_SAVE = 'SETTINGS_EDIT_SAVE'

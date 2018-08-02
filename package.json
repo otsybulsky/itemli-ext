@@ -4,10 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev":
-      "set NODE_ENV=development&&webpack -w --display-error-details --progress --colors",
-    "prod":
-      "set NODE_ENV=production&&webpack --display-error-details --progress --colors",
+    "dev": "set NODE_ENV=development&&webpack -w --display-error-details --progress --colors",
+    "prod": "set NODE_ENV=production&&webpack --display-error-details --progress --colors",
     "start": "web-ext run -s extension/"
   },
   "author": "",
@@ -27,6 +25,7 @@
     "axios": "0.18.0",
     "immutable": "3.8.2",
     "material-ui": "0.20.0",
+    "react-materialize": "^2.2.1",
     "phoenix": "1.3.0",
     "react": "16.3.0",
     "react-confirm": "0.1.17",
