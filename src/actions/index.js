@@ -29,24 +29,19 @@ export function settingsCheck(params) {
   let saveSettings = false
 
   if (!settings) {
-    const mainApi = 'https://itemli.gigalixirapp.com'
-    settings = {
+    const mainApi = (settings = {
       buildVersion: 0,
-      api: [mainApi],
-      currentApi: mainApi
-    }
+      currentApi: 'https://localhost:4000'
+    })
     saveSettings = true
   }
 
-  if (settings.buildVersion !== buildVersion) {
-    if (settings.buildVersion < 1) {
-      const mainApi = 'https://localhost:4000'
-      settings.api = [mainApi, ...settings.api]
-      settings.currentApi = mainApi
-      settings.buildVersion = 1
-    }
-    saveSettings = true
-  }
+  // if (settings.buildVersion !== buildVersion) {
+  //   if (settings.buildVersion < 1) {
+  //     settings.buildVersion = 1
+  //   }
+  //   saveSettings = true
+  // }
 
   if (saveSettings) {
     localStorage.setItem('settings', JSON.stringify(settings))

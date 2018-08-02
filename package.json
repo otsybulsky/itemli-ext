@@ -4,10 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev":
-      "set NODE_ENV=development&&webpack -w --display-error-details --progress --colors",
-    "prod":
-      "set NODE_ENV=production&&webpack --display-error-details --progress --colors",
+    "dev": "set NODE_ENV=development&&webpack -w --display-error-details --progress --colors",
+    "prod": "set NODE_ENV=production&&webpack --display-error-details --progress --colors",
     "start": "web-ext run -s extension/"
   },
   "author": "",

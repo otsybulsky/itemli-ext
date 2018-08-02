@@ -7,7 +7,7 @@ import {
   settingsCheck
 } from '../actions'
 import { sendTabs } from '../actions/socket'
-import { BACKEND_URL } from '../constants'
+
 import { mapToArr } from '../helpers'
 
 import Article from './article'
