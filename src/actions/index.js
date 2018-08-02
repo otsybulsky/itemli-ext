@@ -8,6 +8,7 @@ import {
   CHANGE_SELECT_ALL,
   SETTINGS_EDIT,
   SETTINGS_EDIT_CANCEL,
+  SETTINGS_EDIT_SAVE,
   SETTINGS_CHECK
 } from '../constants'
 
@@ -43,14 +44,14 @@ export function settingsCheck(params) {
   //   saveSettings = true
   // }
 
-  if (saveSettings) {
-    localStorage.setItem('settings', JSON.stringify(settings))
-  }
-
   settings.socketApi = `wss${settings.currentApi.replace(
     /https|http/,
     ''
   )}/socket`
+
+  if (saveSettings) {
+    localStorage.setItem('settings', JSON.stringify(settings))
+  }
 
   return {
     type: SETTINGS_CHECK,
@@ -67,6 +68,33 @@ export function settingsEdit(params) {
 export function settingsEditCancel(params) {
   return {
     type: SETTINGS_EDIT_CANCEL
+  }
+}
+
+export function settingsEditSave(params) {
+  return dispatch => {
+    const { settings, changes } = params
+    let saveSettings = false
+
+    if (settings.currentApi !== changes.currentApi) {
+      settings.currentApi = changes.currentApi
+      settings.socketApi = `wss${settings.currentApi.replace(
+        /https|http/,
+        ''
+      )}/socket`
+      localStorage.setItem('settings', JSON.stringify(settings))
+      saveSettings = true
+    }
+
+    if (saveSettings) {
+      dispatch({
+        type: SETTINGS_EDIT_SAVE,
+        payload: params
+      })
+      dispatch(settingsCheck())
+    } else {
+      dispatch(settingsEditCancel())
+    }
   }
 }
 

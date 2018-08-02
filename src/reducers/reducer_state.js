@@ -7,6 +7,7 @@ import {
   SEND_TABS_OK,
   SETTINGS_EDIT,
   SETTINGS_EDIT_CANCEL,
+  SETTINGS_EDIT_SAVE,
   SETTINGS_CHECK
 } from '../constants'
 
@@ -77,6 +78,12 @@ export default function(state = INIT_STATE, { type, payload }) {
       return {
         ...state,
         showSettings: false
+      }
+    case SETTINGS_EDIT_SAVE:
+      return {
+        ...state,
+        showSettings: false,
+        retryConnectServer: true
       }
 
     default:

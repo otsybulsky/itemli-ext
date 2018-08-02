@@ -66,10 +66,9 @@ class App extends Component {
   }
 
   activatePortal(path, tabsSaved) {
-    const portalUrl = `${BACKEND_URL}`
-    const absolutePath = `${BACKEND_URL}/${path}`
-
-    const { windowTabs } = this.props
+    const { windowTabs, settings } = this.props
+    const portalUrl = settings.currentApi
+    const absolutePath = `${portalUrl}/${path}`
 
     const firstTab = windowTabs[0]
 
