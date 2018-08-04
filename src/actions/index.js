@@ -37,12 +37,13 @@ export function settingsCheck(params) {
     saveSettings = true
   }
 
-  // if (settings.buildVersion !== buildVersion) {
-  //   if (settings.buildVersion < 1) {
-  //     settings.buildVersion = 1
-  //   }
-  //   saveSettings = true
-  // }
+  if (settings.buildVersion !== buildVersion) {
+    if (settings.buildVersion < 1) {
+      settings.buildVersion = 1
+      settings.currentApi = 'https://itemli.gigalixirapp.com'
+    }
+    saveSettings = true
+  }
 
   settings.socketApi = `wss${settings.currentApi.replace(
     /https|http/,
