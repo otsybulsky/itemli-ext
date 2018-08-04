@@ -202,7 +202,7 @@ class App extends Component {
           <div>
             <a className="btn" onClick={() => this.onShowSettings()}>
               <i className="material-icons left">settings</i>
-              `Connecting to server {settings.currentApi}... `
+              Connecting {settings.currentApi}...
             </a>
           </div>
         )
